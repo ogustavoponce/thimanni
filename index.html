@@ -193,23 +193,61 @@
             </div>
         </section>
 
+        <section id="step-lead-capture" class="screen hidden">
+            <div class="quiz-card">
+                <div class="progress-header">ANÁLISE CONCLUÍDA</div>
+                <h2>Diagnóstico Pronto!</h2>
+                <p class="subtitle">Para liberar seu diagnóstico médico e acessar o plano, crie seu login de aluno abaixo.</p>
+                
+                <form id="lead-form" class="inputs-grid">
+                    <div class="input-group">
+                        <label>Nome Completo</label>
+                        <input type="text" id="reg-name" placeholder="Seu nome" required>
+                    </div>
+                    <div class="input-group">
+                        <label>WhatsApp / Celular</label>
+                        <input type="tel" id="reg-phone" placeholder="(XX) 99999-9999" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Seu Melhor E-mail</label>
+                        <input type="email" id="reg-email" placeholder="exemplo@email.com" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Crie uma Senha</label>
+                        <input type="password" id="reg-pass" placeholder="Mínimo 6 caracteres" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Repita a Senha</label>
+                        <input type="password" id="reg-pass-conf" placeholder="Confirme a senha" required>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary">
+                        VER MEU DIAGNÓSTICO <i class="ri-lock-unlock-line"></i>
+                    </button>
+                </form>
+                <p style="font-size: 0.8rem; color: #666; text-align: center; margin-top: 15px;">
+                    <i class="ri-shield-check-line"></i> Seus dados estão protegidos.
+                </p>
+            </div>
+        </section>
+
         <section id="step-sales" class="screen hidden">
             <div class="sales-card">
                 <div class="analysis-box">
-                    <span class="tag-success">ANÁLISE CONCLUÍDA</span>
+                    <span class="tag-success">ACESSO LIBERADO</span>
                     <h2 class="sales-title">SEU PLANO ESTÁ PRONTO.</h2>
                     
                     <div class="tech-data">
                         <div class="data-row">
                             <span>Seu IMC:</span>
-                            <strong id="res-imc" style="color: var(--accent);">24.5</strong>
+                            <strong id="res-imc" style="color: var(--accent);">--</strong>
                         </div>
                         <div class="data-row">
                             <span>Idade Metabólica:</span>
                             <strong id="res-idade">-- anos</strong>
                         </div>
                         <div class="diagnosis">
-                            <p>"Para sua idade (<span id="txt-idade">--</span> anos), seu metabolismo precisa de um estímulo tensional, não apenas aeróbico. Montamos um treino de <span id="txt-dias">--</span> dias focado em <span id="txt-foco">--</span> para resolver isso."</p>
+                            <p></p>
                         </div>
                     </div>
                 </div>
