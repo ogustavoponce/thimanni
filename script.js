@@ -1,13 +1,14 @@
 // --- 1. CONFIGURAÇÃO DO FIREBASE ---
 // COLE AQUI AS CHAVES QUE VOCÊ COPIOU DO CONSOLE
 const firebaseConfig = {
-    apiKey: "SUA_API_KEY_AQUI",
-    authDomain: "SEU_PROJETO.firebaseapp.com",
-    projectId: "SEU_PROJETO",
-    storageBucket: "SEU_PROJETO.appspot.com",
-    messagingSenderId: "NUMERO",
-    appId: "ID_DO_APP"
-};
+    apiKey: "AIzaSyBKRf-fSGJvYO8aZlQfxNbBMdWUXLZP9dA",
+    authDomain: "thimanni-bbd0d.firebaseapp.com",
+    projectId: "thimanni-bbd0d",
+    storageBucket: "thimanni-bbd0d.firebasestorage.app",
+    messagingSenderId: "782988538430",
+    appId: "1:782988538430:web:f0721cf0832d44b6cb576f",
+    measurementId: "G-H87S5SBHW5"
+  };
 
 // Inicializa Firebase
 firebase.initializeApp(firebaseConfig);
@@ -123,3 +124,71 @@ function loadUserTraining(uid) {
 }
 
 // ... (Mantenha as funções nextStep, toggleModal e lógica do Quiz anteriores aqui) ...
+// Variável para saber se está tentando logar ou cadastrar
+let isLoginMode = true; 
+
+function toggleAuthMode() {
+    isLoginMode = !isLoginMode; // Inverte o modo
+    
+    const title = document.getElementById('modal-title');
+    const btn = document.getElementById('auth-btn');
+    const toggleText = document.getElementById('toggle-text');
+    const toggleLink = document.getElementById('toggle-link');
+
+    if (isLoginMode) {
+        title.innerText = "Acesso Thimanni";
+        btn.innerText = "ENTRAR NA PLATAFORMA";
+        toggleText.innerText = "Ainda não é aluno?";
+        toggleLink.innerText = "Criar conta agora";
+    } else {
+        title.innerText = "Criar Nova Conta";
+        btn.innerText = "CADASTRAR E ENTRAR";
+        toggleText.innerText = "Já tem conta?";
+        toggleLink.innerText = "Fazer Login";
+    }
+}
+
+// Listener do Formulário (Serve para os dois)
+document.getElementById('auth-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    const email = document.getElementById('auth-email').value;
+    const password = document.getElementById('auth-password').value;
+    const btn = document.getElementById('auth-btn');
+    
+    btn.innerText = "Processando...";
+    btn.disabled = true;
+
+    if (isLoginMode) {
+        // --- MODO LOGIN ---
+        auth.signInWithEmailAndPassword(email, password)
+            .then(() => {
+                toggleModal('login-modal');
+                btn.disabled = false;
+            })
+            .catch((error) => {
+                alert("Erro ao entrar: " + error.message);
+                btn.innerText = "ENTRAR NA PLATAFORMA";
+                btn.disabled = false;
+            });
+    } else {
+        // --- MODO CADASTRO ---
+        auth.createUserWithEmailAndPassword(email, password)
+            .then((userCredential) => {
+                // Cria o registro vazio no banco de dados para não dar erro
+                db.collection('usuarios').doc(userCredential.user.uid).set({
+                    nomeTreino: "Aguardando Avaliação...",
+                    status: "novo"
+                });
+                
+                toggleModal('login-modal');
+                alert("Conta criada com sucesso! Bem-vindo ao time.");
+                btn.disabled = false;
+            })
+            .catch((error) => {
+                alert("Erro ao cadastrar: " + error.message);
+                btn.innerText = "CADASTRAR E ENTRAR";
+                btn.disabled = false;
+            });
+    }
+});

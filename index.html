@@ -110,16 +110,26 @@
     </main>
 
     <div id="login-modal" class="modal hidden">
-        <div class="modal-content" style="padding: 40px; width: 90%; max-width: 400px; border-radius: 15px;">
-            <span onclick="toggleModal('login-modal')" style="float:right; cursor:pointer; font-size: 1.5rem;">&times;</span>
-            <h2 style="margin-bottom: 20px;">Acesso Thimanni</h2>
-            <form id="login-form">
-                <input type="email" placeholder="E-mail" required>
-                <input type="password" placeholder="Senha" required>
-                <button type="submit" class="btn-primary">ENTRAR NA PLATAFORMA</button>
-            </form>
-        </div>
+    <div class="modal-content">
+        <span class="close" onclick="toggleModal('login-modal')">&times;</span>
+        
+        <h2 id="modal-title" style="margin-bottom: 20px;">Acesso Thimanni</h2>
+        
+        <form id="auth-form">
+            <input type="email" id="auth-email" placeholder="E-mail" required>
+            <input type="password" id="auth-password" placeholder="Senha" required>
+            
+            <button type="submit" id="auth-btn" class="btn-primary">ENTRAR NA PLATAFORMA</button>
+        </form>
+
+        <p style="margin-top: 15px; text-align: center; color: #888; font-size: 0.9rem;">
+            <span id="toggle-text">Ainda não é aluno?</span>
+            <a href="#" onclick="toggleAuthMode()" style="color: var(--accent); font-weight: bold; text-decoration: none;">
+                <span id="toggle-link">Criar conta agora</span>
+            </a>
+        </p>
     </div>
+</div>
 
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
