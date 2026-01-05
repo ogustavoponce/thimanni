@@ -12,20 +12,20 @@
 
     <nav class="glass-nav">
         <div class="logo">THIMANNI<span>AMARAL</span></div>
-        <button class="btn-login" onclick="toggleModal('login-modal')">
-            ÁREA DO ALUNO
+        <button class="btn-login-nav" onclick="toggleModal('login-modal')">
+            <i class="ri-user-line"></i> Já sou aluno
         </button>
     </nav>
 
     <main>
         <section id="step-home" class="screen active">
             <div class="hero-content">
-                <span class="tag">CONSULTORIA ONLINE</span>
+                <span class="tag">CONSULTORIA PREMIUM</span>
                 <h1>SEU CORPO<br><span class="gradient-text">SEU TROFÉU.</span></h1>
-                <p>Método exclusivo Timoni Amaral. Treinos personalizados para queimar gordura e definir de verdade.</p>
+                <p>Método exclusivo Timoni Amaral. Responda o quiz e descubra o protocolo ideal para o seu biotipo.</p>
                 
-                <button class="btn-primary" onclick="nextStep('step-quiz-1')">
-                    QUERO MEU PROJETO <i class="ri-arrow-right-line"></i>
+                <button class="btn-primary pulsate" onclick="nextStep('step-quiz-1')">
+                    COMEÇAR AGORA <i class="ri-arrow-right-line"></i>
                 </button>
             </div>
             <div class="hero-bg-effect"></div>
@@ -34,7 +34,7 @@
         <section id="step-quiz-1" class="screen hidden">
             <div class="quiz-card">
                 <div class="progress-bar"><div class="fill" style="width: 33%"></div></div>
-                <h2>Qual é o seu foco hoje?</h2>
+                <h2>Qual é o seu objetivo principal?</h2>
                 <div class="options-grid">
                     <button class="option-card" onclick="selectOption('objetivo', 'emagrecer', 'step-quiz-2')">
                         <i class="ri-fire-fill" style="color: #FF4500;"></i>
@@ -51,10 +51,10 @@
         <section id="step-quiz-2" class="screen hidden">
             <div class="quiz-card">
                 <div class="progress-bar"><div class="fill" style="width: 66%"></div></div>
-                <h2>Experiência com treino:</h2>
+                <h2>Qual seu nível de experiência?</h2>
                 <div class="options-grid">
                     <button class="option-card" onclick="selectOption('nivel', 'iniciante', 'step-loading')">
-                        <i class="ri-footprint-line"></i> <span>Começando agora</span>
+                        <i class="ri-footprint-line"></i> <span>Sou iniciante</span>
                     </button>
                     <button class="option-card" onclick="selectOption('nivel', 'avancado', 'step-loading')">
                         <i class="ri-trophy-line"></i> <span>Já treino pesado</span>
@@ -66,42 +66,48 @@
         <section id="step-loading" class="screen hidden">
             <div class="loader-content" style="text-align: center;">
                 <div class="spinner"></div>
-                <h3 id="loading-text" style="font-style: italic;">Montando estratégia Thimanni...</h3>
+                <h3 id="loading-text" style="font-style: italic;">Analisando suas respostas...</h3>
             </div>
         </section>
 
         <section id="step-sales" class="screen hidden">
             <div class="sales-card">
-                <span class="tag">PROTOCOLO PRONTO</span>
-                <h2 id="plan-name" style="margin: 20px 0; font-style: italic; font-weight: 900;">DESAFIO THIMANNI 30 DIAS</h2>
+                <span class="tag">SEU TREINO ESTÁ PRONTO</span>
+                <h2 id="plan-name" style="margin: 20px 0; font-style: italic; font-weight: 900; text-transform: uppercase;">PROTOCOLO THIMANNI</h2>
                 
-                <div style="background: #222; padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 1px dashed #444;">
-                    <p style="color: #ccc; font-size: 0.9rem;">Plano gerado para: <strong>Seu Objetivo</strong></p>
+                <div class="result-box">
+                    <p>Com base no seu perfil, criamos uma estratégia de 8 semanas para <span id="result-focus" style="color: var(--accent); font-weight: bold;">transformar seu corpo</span>.</p>
                 </div>
+
+                <ul class="benefits">
+                    <li><i class="ri-check-double-line"></i> Ficha de Treino PDF</li>
+                    <li><i class="ri-check-double-line"></i> Vídeos de Execução</li>
+                    <li><i class="ri-check-double-line"></i> Acesso Vitalício</li>
+                </ul>
 
                 <div class="price">R$ 49,90</div>
                 
                 <button class="btn-primary" onclick="goToPayment()">
-                    LIBERAR ACESSO AGORA
+                    QUERO MEU TREINO
                 </button>
-                <p style="margin-top: 15px; font-size: 0.8rem; color: #666;"><i class="ri-lock-2-line"></i> Pagamento Seguro via Hotmart/Kiwify</p>
+                <p class="secure"><i class="ri-lock-2-line"></i> Compra 100% Segura</p>
             </div>
         </section>
 
         <section id="step-dashboard" class="screen hidden">
             <div class="dashboard-container">
                 <div class="welcome-header">
-                    <h2>Bem-vinda, <span id="user-name" style="color: var(--accent);">Aluna</span>!</h2>
-                    <button onclick="logout()" style="background:none; border:none; color: #666; cursor:pointer;">SAIR</button>
+                    <h2>Olá, <span id="user-name" style="color: var(--accent);">Atleta</span>!</h2>
+                    <button onclick="logout()" class="btn-logout">SAIR <i class="ri-logout-box-r-line"></i></button>
                 </div>
 
                 <div class="training-card">
-                    <span class="tag">SEU PLANO ATIVO</span>
-                    <h3 id="user-plan-name" style="font-size: 2rem; margin: 15px 0;">THIMANNI PRO</h3>
+                    <span class="tag">SEU ACESSO</span>
+                    <h3 id="user-plan-name" style="font-size: 2rem; margin: 15px 0;">Carregando...</h3>
                     
                     <div class="actions-row">
-                        <a id="btn-download-pdf" href="#" target="_blank" class="btn-primary" style="text-align:center; text-decoration:none; display:flex; justify-content:center; align-items:center;">
-                            BAIXAR MEU TREINO (PDF)
+                        <a id="btn-download-pdf" href="#" target="_blank" class="btn-primary disabled" style="text-align:center; text-decoration:none; display:flex; justify-content:center; align-items:center;">
+                            BAIXAR FICHA (PDF)
                         </a>
                     </div>
                 </div>
@@ -110,26 +116,26 @@
     </main>
 
     <div id="login-modal" class="modal hidden">
-    <div class="modal-content">
-        <span class="close" onclick="toggleModal('login-modal')">&times;</span>
-        
-        <h2 id="modal-title" style="margin-bottom: 20px;">Acesso Thimanni</h2>
-        
-        <form id="auth-form">
-            <input type="email" id="auth-email" placeholder="E-mail" required>
-            <input type="password" id="auth-password" placeholder="Senha" required>
+        <div class="modal-content">
+            <span class="close" onclick="toggleModal('login-modal')">&times;</span>
             
-            <button type="submit" id="auth-btn" class="btn-primary">ENTRAR NA PLATAFORMA</button>
-        </form>
+            <h2 id="modal-title" style="margin-bottom: 20px;">Área do Aluno</h2>
+            
+            <form id="auth-form">
+                <input type="email" id="auth-email" placeholder="Seu E-mail" required>
+                <input type="password" id="auth-password" placeholder="Sua Senha" required>
+                
+                <button type="submit" id="auth-btn" class="btn-primary">ENTRAR</button>
+            </form>
 
-        <p style="margin-top: 15px; text-align: center; color: #888; font-size: 0.9rem;">
-            <span id="toggle-text">Ainda não é aluno?</span>
-            <a href="#" onclick="toggleAuthMode()" style="color: var(--accent); font-weight: bold; text-decoration: none;">
-                <span id="toggle-link">Criar conta agora</span>
-            </a>
-        </p>
+            <div class="toggle-auth">
+                <span id="toggle-text">Ainda não tem acesso?</span>
+                <a href="#" onclick="toggleAuthMode()">
+                    <span id="toggle-link">Criar conta</span>
+                </a>
+            </div>
+        </div>
     </div>
-</div>
 
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
