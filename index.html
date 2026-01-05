@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THIMANNI AMARAL | Consultoria Online</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav class="glass-nav">
+        <div class="logo">THIMANNI<span>AMARAL</span></div>
+        <button class="btn-login" onclick="toggleModal('login-modal')">
+            ÁREA DO ALUNO
+        </button>
+    </nav>
+
+    <main>
+        <section id="step-home" class="screen active">
+            <div class="hero-content">
+                <span class="tag">CONSULTORIA ONLINE</span>
+                <h1>SEU CORPO<br><span class="gradient-text">SEU TROFÉU.</span></h1>
+                <p>Método exclusivo Timoni Amaral. Treinos personalizados para queimar gordura e definir de verdade.</p>
+                
+                <button class="btn-primary" onclick="nextStep('step-quiz-1')">
+                    QUERO MEU PROJETO <i class="ri-arrow-right-line"></i>
+                </button>
+            </div>
+            <div class="hero-bg-effect"></div>
+        </section>
+
+        <section id="step-quiz-1" class="screen hidden">
+            <div class="quiz-card">
+                <div class="progress-bar"><div class="fill" style="width: 33%"></div></div>
+                <h2>Qual é o seu foco hoje?</h2>
+                <div class="options-grid">
+                    <button class="option-card" onclick="selectOption('objetivo', 'emagrecer', 'step-quiz-2')">
+                        <i class="ri-fire-fill" style="color: #FF4500;"></i>
+                        <span>Secar e Definir</span>
+                    </button>
+                    <button class="option-card" onclick="selectOption('objetivo', 'hipertrofia', 'step-quiz-2')">
+                        <i class="ri-boxing-fill" style="color: #FF4500;"></i>
+                        <span>Ganhar Músculos</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="step-quiz-2" class="screen hidden">
+            <div class="quiz-card">
+                <div class="progress-bar"><div class="fill" style="width: 66%"></div></div>
+                <h2>Experiência com treino:</h2>
+                <div class="options-grid">
+                    <button class="option-card" onclick="selectOption('nivel', 'iniciante', 'step-loading')">
+                        <i class="ri-footprint-line"></i> <span>Começando agora</span>
+                    </button>
+                    <button class="option-card" onclick="selectOption('nivel', 'avancado', 'step-loading')">
+                        <i class="ri-trophy-line"></i> <span>Já treino pesado</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="step-loading" class="screen hidden">
+            <div class="loader-content" style="text-align: center;">
+                <div class="spinner"></div>
+                <h3 id="loading-text" style="font-style: italic;">Montando estratégia Thimanni...</h3>
+            </div>
+        </section>
+
+        <section id="step-sales" class="screen hidden">
+            <div class="sales-card">
+                <span class="tag">PROTOCOLO PRONTO</span>
+                <h2 id="plan-name" style="margin: 20px 0; font-style: italic; font-weight: 900;">DESAFIO THIMANNI 30 DIAS</h2>
+                
+                <div style="background: #222; padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 1px dashed #444;">
+                    <p style="color: #ccc; font-size: 0.9rem;">Plano gerado para: <strong>Seu Objetivo</strong></p>
+                </div>
+
+                <div class="price">R$ 49,90</div>
+                
+                <button class="btn-primary" onclick="goToPayment()">
+                    LIBERAR ACESSO AGORA
+                </button>
+                <p style="margin-top: 15px; font-size: 0.8rem; color: #666;"><i class="ri-lock-2-line"></i> Pagamento Seguro via Hotmart/Kiwify</p>
+            </div>
+        </section>
+
+        <section id="step-dashboard" class="screen hidden">
+            <div class="dashboard-container">
+                <div class="welcome-header">
+                    <h2>Bem-vinda, <span id="user-name" style="color: var(--accent);">Aluna</span>!</h2>
+                    <button onclick="logout()" style="background:none; border:none; color: #666; cursor:pointer;">SAIR</button>
+                </div>
+
+                <div class="training-card">
+                    <span class="tag">SEU PLANO ATIVO</span>
+                    <h3 id="user-plan-name" style="font-size: 2rem; margin: 15px 0;">THIMANNI PRO</h3>
+                    
+                    <div class="actions-row">
+                        <a id="btn-download-pdf" href="#" target="_blank" class="btn-primary" style="text-align:center; text-decoration:none; display:flex; justify-content:center; align-items:center;">
+                            BAIXAR MEU TREINO (PDF)
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="login-modal" class="modal hidden">
+        <div class="modal-content" style="padding: 40px; width: 90%; max-width: 400px; border-radius: 15px;">
+            <span onclick="toggleModal('login-modal')" style="float:right; cursor:pointer; font-size: 1.5rem;">&times;</span>
+            <h2 style="margin-bottom: 20px;">Acesso Thimanni</h2>
+            <form id="login-form">
+                <input type="email" placeholder="E-mail" required>
+                <input type="password" placeholder="Senha" required>
+                <button type="submit" class="btn-primary">ENTRAR NA PLATAFORMA</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
