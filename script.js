@@ -1,4 +1,4 @@
-// --- 1. CONFIGURAÇÃO FIREBASE (MANTENHA A SUA REAL AQUI!) ---
+// --- CONFIGURAÇÃO FIREBASE (MANTENHA A SUA) ---
 const firebaseConfig = {
     apiKey: "AIzaSyBKRf-fSGJvYO8aZlQfxNbBMdWUXLZP9dA",
     authDomain: "thimanni-bbd0d.firebaseapp.com",
@@ -9,138 +9,128 @@ const firebaseConfig = {
     measurementId: "G-H87S5SBHW5"
 };
 
-// Inicializa
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// --- 2. DADOS DO USUÁRIO & FUNIL ---
+// --- DADOS DO USUÁRIO ---
 let userData = {
     sexo: '',
-    idade: '',
-    peso: '',
-    altura: '',
-    musculos: [], // Array para guardar os músculos clicados
-    nivel: ''
+    idade: 0,
+    peso: 0,
+    altura: 0,
+    meta: '',
+    nivel: '',
+    local: '',
+    dias: '',
+    lesao: '',
+    foco: ''
 };
 
-// Navegação Simples
+// Navegação
 function nextStep(stepId) {
     document.querySelectorAll('.screen').forEach(el => {
         el.classList.remove('active');
         el.classList.add('hidden');
     });
-    const next = document.getElementById(stepId);
-    next.classList.remove('hidden');
-    next.classList.add('active');
+    document.getElementById(stepId).classList.remove('hidden');
+    document.getElementById(stepId).classList.add('active');
 }
 
-// Opção Única (Sexo, Nível)
-function selectOption(category, value, nextStepId) {
-    userData[category] = value;
-    
-    if (nextStepId === 'step-loading') {
-        startLoadingProcess(); // Inicia o show do loading
+// Opção Selecionável
+function selectOption(key, value, nextId) {
+    userData[key] = value;
+    if (nextId === 'step-loading') {
+        startAnalysis(); // O show do cálculo
     } else {
-        nextStep(nextStepId);
+        nextStep(nextId);
     }
 }
 
-// Validação dos Inputs (Idade/Peso)
-function validateAndNext(nextStepId) {
-    const idade = document.getElementById('input-idade').value;
-    const peso = document.getElementById('input-peso').value;
-    const altura = document.getElementById('input-altura').value;
+// Validação da Biometria (Idade/Peso/Altura)
+function validateBio(nextId) {
+    const i = document.getElementById('input-idade').value;
+    const p = document.getElementById('input-peso').value;
+    const a = document.getElementById('input-altura').value;
 
-    if(!idade || !peso || !altura) {
-        alert("Por favor, preencha todas as medidas para calcularmos seu protocolo.");
+    if (!i || !p || !a) {
+        alert("Preencha todos os dados para que o cálculo seja preciso.");
         return;
     }
-
-    userData.idade = idade;
-    userData.peso = peso;
-    userData.altura = altura;
-    nextStep(nextStepId);
-}
-
-// LÓGICA DO BONECO (Músculos)
-function toggleMuscle(btn, muscleName) {
-    btn.classList.toggle('active'); // Muda a cor do botão
     
-    if (userData.musculos.includes(muscleName)) {
-        // Se já tem, remove
-        userData.musculos = userData.musculos.filter(m => m !== muscleName);
-    } else {
-        // Se não tem, adiciona
-        userData.musculos.push(muscleName);
-    }
+    userData.idade = i;
+    userData.peso = p;
+    userData.altura = a;
+    nextStep(nextId);
 }
 
-// O SHOW DO LOADING (Persuasão)
-function startLoadingProcess() {
+// O CÁLCULO E LOADING (PULO DO GATO)
+function startAnalysis() {
     nextStep('step-loading');
-    
-    const title = document.getElementById('loading-text');
+    const txt = document.getElementById('loading-txt');
     const sub = document.getElementById('loading-sub');
     
+    // Sequência de frases para parecer IA
     const steps = [
-        { t: "Calculando IMC...", s: `Baseado em ${userData.peso}kg e ${userData.altura}cm` },
-        { t: "Analisando Biotipo...", s: "Verificando estrutura óssea" },
-        { t: "Focando nos Músculos...", s: `Otimizando para: ${userData.musculos.join(', ') || 'Corpo todo'}` },
-        { t: "Gerando Protocolo...", s: "Finalizando PDF personalizado" }
+        { t: "Calculando IMC...", s: "Processando peso e altura..." },
+        { t: "Analisando Metabolismo...", s: `Baseado em ${userData.idade} anos...` },
+        { t: "Verificando Lesões...", s: userData.lesao === 'Nenhuma' ? "Estrutura apta para carga..." : "Adaptando para segurança..." },
+        { t: "Finalizando Plano...", s: `Foco total em: ${userData.foco}` }
     ];
 
-    let i = 0;
+    let count = 0;
     const interval = setInterval(() => {
-        if (i < steps.length) {
-            title.innerText = steps[i].t;
-            sub.innerText = steps[i].s;
-            i++;
+        if (count < steps.length) {
+            txt.innerText = steps[count].t;
+            sub.innerText = steps[count].s;
+            count++;
         } else {
             clearInterval(interval);
-            showSalesPage();
+            showResults();
         }
-    }, 1500); // Muda a cada 1.5s
+    }, 1500);
 }
 
-function showSalesPage() {
-    // Preenche os dados na página de venda para parecer personalizado
-    document.getElementById('res-sexo').innerText = userData.sexo === 'homem' ? 'Masculino' : 'Feminino';
+function showResults() {
+    // 1. Calcula IMC
+    let alturaMetros = userData.altura / 100;
+    let imc = (userData.peso / (alturaMetros * alturaMetros)).toFixed(1);
+
+    // 2. Preenche a tela de vendas com DADOS REAIS
+    document.getElementById('res-imc').innerText = imc;
+    document.getElementById('res-idade').innerText = userData.idade; // Idade real
     
-    // Capitaliza a primeira letra do foco principal
-    let foco = userData.musculos.length > 0 ? userData.musculos[0] : "Geral";
-    document.getElementById('res-foco').innerText = foco.charAt(0).toUpperCase() + foco.slice(1);
-    
-    // Define nome do plano
-    const planName = userData.sexo === 'homem' ? 'SHAPE SPARTANO' : 'CORPO DEUSA';
-    document.getElementById('final-plan-name').innerText = planName;
+    // 3. O Texto "Médico"
+    document.getElementById('txt-idade').innerText = userData.idade;
+    document.getElementById('txt-dias').innerText = userData.dias.split(' ')[0]; // Pega só o número (ex: "4")
+    document.getElementById('txt-foco').innerText = userData.foco;
 
     nextStep('step-sales');
 }
 
 function goToPayment() {
-    alert("Redirecionando para Check-out Seguro...");
-    // window.location.href = "SEU_LINK_KIWIFY_AQUI";
+    alert("Redirecionando para o Checkout...");
+    // window.location.href = "SEU_LINK_DE_PAGAMENTO";
 }
 
-// --- 3. SISTEMA DE LOGIN (Mantido igual, mas conectado ao novo dashboard) ---
+// --- LOGIN/CADASTRO E DASHBOARD (Mantido igual) ---
 let isLoginMode = true;
 
 function toggleModal(modalId) { document.getElementById(modalId).classList.toggle('hidden'); }
-
 function toggleAuthMode() {
     isLoginMode = !isLoginMode;
     const btn = document.getElementById('auth-btn');
     const link = document.getElementById('toggle-link');
+    const title = document.getElementById('modal-title');
     const text = document.getElementById('toggle-text');
     
     if (isLoginMode) {
-        document.getElementById('modal-title').innerText = "Área do Aluno";
+        title.innerText = "Acesso Thimanni";
         btn.innerText = "ENTRAR";
-        text.innerText = "Ainda não tem acesso?";
+        text.innerText = "Ainda não é aluno?";
         link.innerText = "Criar conta";
     } else {
-        document.getElementById('modal-title').innerText = "Criar Conta";
+        title.innerText = "Criar Nova Conta";
         btn.innerText = "CADASTRAR";
         text.innerText = "Já tem conta?";
         link.innerText = "Fazer Login";
@@ -152,10 +142,10 @@ document.getElementById('auth-form').addEventListener('submit', (e) => {
     const email = document.getElementById('auth-email').value;
     const password = document.getElementById('auth-password').value;
     const btn = document.getElementById('auth-btn');
-
-    btn.innerText = "...";
     
-    if(isLoginMode) {
+    btn.innerText = "...";
+
+    if (isLoginMode) {
         auth.signInWithEmailAndPassword(email, password).then(() => {
             toggleModal('login-modal');
             btn.innerText = "ENTRAR";
@@ -164,7 +154,7 @@ document.getElementById('auth-form').addEventListener('submit', (e) => {
         auth.createUserWithEmailAndPassword(email, password).then((cred) => {
             return db.collection('usuarios').doc(cred.user.uid).set({
                 nomeTreino: "Aguardando Pagamento",
-                status: "novo"
+                linkPdf: ""
             });
         }).then(() => {
             toggleModal('login-modal');
@@ -180,26 +170,25 @@ auth.onAuthStateChanged((user) => {
     const navBtn = document.querySelector('.btn-login-nav');
     if (user) {
         document.getElementById('user-name').innerText = user.email.split('@')[0];
-        loadUserTraining(user.uid);
+        loadUserPlan(user.uid);
         navBtn.innerHTML = '<i class="ri-dashboard-line"></i> Painel';
         navBtn.onclick = () => nextStep('step-dashboard');
     } else {
-        navBtn.innerHTML = '<i class="ri-user-line"></i> Já sou aluno';
+        navBtn.innerHTML = '<i class="ri-user-line"></i> Área do Aluno';
         navBtn.onclick = () => toggleModal('login-modal');
         if(document.getElementById('step-dashboard').classList.contains('active')) nextStep('step-home');
     }
 });
 
-function loadUserTraining(uid) {
+function loadUserPlan(uid) {
     db.collection('usuarios').doc(uid).get().then((doc) => {
-        if (doc.exists) {
+        if(doc.exists) {
             const data = doc.data();
-            document.getElementById('user-plan-name').innerText = data.nomeTreino || "Analisando...";
+            document.getElementById('user-plan-name').innerText = data.nomeTreino || "Processando...";
             const btn = document.getElementById('btn-download-pdf');
-            if (data.linkPdf) {
+            if(data.linkPdf) {
                 btn.href = data.linkPdf;
                 btn.classList.remove('disabled');
-                btn.innerHTML = '<i class="ri-download-cloud-2-line"></i> BAIXAR TREINO PDF';
             }
         }
     });
