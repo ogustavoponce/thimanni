@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THIMANNI AMARAL | Consultoria Online</title>
+    <title>THIMANNI AMARAL | Consultoria Inteligente</title>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
@@ -20,95 +20,212 @@
     <main>
         <section id="step-home" class="screen active">
             <div class="hero-content">
-                <span class="tag">CONSULTORIA PREMIUM</span>
-                <h1>SEU CORPO<br><span class="gradient-text">SEU TROFÉU.</span></h1>
-                <p>Método exclusivo Timoni Amaral. Responda o quiz e descubra o protocolo ideal para o seu biotipo.</p>
+                <span class="tag">MÉTODO EXCLUSIVO</span>
+                <h1>DEFINA SEU CORPO<br><span class="gradient-text">EM 8 SEMANAS.</span></h1>
+                <p>Pare de perder tempo com treinos genéricos. Nossa IA analisa sua biometria e cria o protocolo exato para o seu objetivo.</p>
                 
-                <button class="btn-primary pulsate" onclick="nextStep('step-quiz-1')">
-                    COMEÇAR AGORA <i class="ri-arrow-right-line"></i>
+                <button class="btn-primary pulsate" onclick="nextStep('step-bio-1')">
+                    FAZER AVALIAÇÃO GRATUITA <i class="ri-arrow-right-line"></i>
                 </button>
+                
+                <div class="social-proof">
+                    <div class="avatars">
+                        <span>+500</span>
+                    </div>
+                    <p>Alunos transformados esse mês</p>
+                </div>
             </div>
             <div class="hero-bg-effect"></div>
         </section>
 
-        <section id="step-quiz-1" class="screen hidden">
+        <section id="step-bio-1" class="screen hidden">
             <div class="quiz-card">
-                <div class="progress-bar"><div class="fill" style="width: 33%"></div></div>
-                <h2>Qual é o seu objetivo principal?</h2>
-                <div class="options-grid">
-                    <button class="option-card" onclick="selectOption('objetivo', 'emagrecer', 'step-quiz-2')">
-                        <i class="ri-fire-fill" style="color: #FF4500;"></i>
-                        <span>Secar e Definir</span>
+                <div class="progress-container">
+                    <div class="step-count">PASSO 1/4</div>
+                    <div class="progress-bar"><div class="fill" style="width: 25%"></div></div>
+                </div>
+                <h2>Selecione seu perfil biológico:</h2>
+                <div class="options-row">
+                    <button class="option-square" onclick="selectOption('sexo', 'homem', 'step-bio-2')">
+                        <i class="ri-men-line"></i>
+                        <span>Masculino</span>
                     </button>
-                    <button class="option-card" onclick="selectOption('objetivo', 'hipertrofia', 'step-quiz-2')">
-                        <i class="ri-boxing-fill" style="color: #FF4500;"></i>
-                        <span>Ganhar Músculos</span>
+                    <button class="option-square" onclick="selectOption('sexo', 'mulher', 'step-bio-2')">
+                        <i class="ri-women-line"></i>
+                        <span>Feminino</span>
                     </button>
                 </div>
             </div>
         </section>
 
-        <section id="step-quiz-2" class="screen hidden">
+        <section id="step-bio-2" class="screen hidden">
             <div class="quiz-card">
-                <div class="progress-bar"><div class="fill" style="width: 66%"></div></div>
-                <h2>Qual seu nível de experiência?</h2>
+                <div class="progress-container">
+                    <div class="step-count">PASSO 2/4</div>
+                    <div class="progress-bar"><div class="fill" style="width: 50%"></div></div>
+                </div>
+                <h2>Suas medidas atuais:</h2>
+                <p style="font-size: 0.9rem; margin-bottom: 20px;">Isso define a intensidade do cardio e carga.</p>
+                
+                <div class="inputs-grid">
+                    <div class="input-group">
+                        <label>Idade</label>
+                        <input type="number" id="input-idade" placeholder="Anos">
+                    </div>
+                    <div class="input-group">
+                        <label>Peso (kg)</label>
+                        <input type="number" id="input-peso" placeholder="kg">
+                    </div>
+                    <div class="input-group">
+                        <label>Altura (cm)</label>
+                        <input type="number" id="input-altura" placeholder="cm">
+                    </div>
+                </div>
+
+                <button class="btn-primary" onclick="validateAndNext('step-body-map')">
+                    CONTINUAR <i class="ri-arrow-right-line"></i>
+                </button>
+            </div>
+        </section>
+
+        <section id="step-body-map" class="screen hidden">
+            <div class="quiz-card">
+                <div class="progress-container">
+                    <div class="step-count">PASSO 3/4</div>
+                    <div class="progress-bar"><div class="fill" style="width: 75%"></div></div>
+                </div>
+                <h2>Onde você quer focar?</h2>
+                <p style="font-size: 0.9rem; margin-bottom: 20px;">Clique nos músculos que deseja destacar no seu corpo.</p>
+                
+                <div class="body-selector">
+                    <button class="muscle-btn" onclick="toggleMuscle(this, 'peitoral')">PEITORAL / BUSTO</button>
+                    <button class="muscle-btn" onclick="toggleMuscle(this, 'bracos')">BRAÇOS</button>
+                    <button class="muscle-btn" onclick="toggleMuscle(this, 'abdomen')">ABDÔMEN (TANQUINHO)</button>
+                    <button class="muscle-btn" onclick="toggleMuscle(this, 'costas')">COSTAS / POSTURA</button>
+                    <button class="muscle-btn" onclick="toggleMuscle(this, 'gluteo')">GLÚTEOS</button>
+                    <button class="muscle-btn" onclick="toggleMuscle(this, 'pernas')">PERNAS DEFINIDAS</button>
+                </div>
+
+                <button class="btn-primary" onclick="nextStep('step-xp')">
+                    PRÓXIMO PASSO <i class="ri-arrow-right-line"></i>
+                </button>
+            </div>
+        </section>
+
+        <section id="step-xp" class="screen hidden">
+            <div class="quiz-card">
+                <div class="progress-container">
+                    <div class="step-count">PASSO 4/4</div>
+                    <div class="progress-bar"><div class="fill" style="width: 100%"></div></div>
+                </div>
+                <h2>Nível de experiência:</h2>
                 <div class="options-grid">
+                    <button class="option-card" onclick="selectOption('nivel', 'sedentario', 'step-loading')">
+                        <i class="ri-sofa-line"></i>
+                        <div class="txt">
+                            <strong>Sedentário</strong>
+                            <span>Não treino nada atualmente</span>
+                        </div>
+                    </button>
                     <button class="option-card" onclick="selectOption('nivel', 'iniciante', 'step-loading')">
-                        <i class="ri-footprint-line"></i> <span>Sou iniciante</span>
+                        <i class="ri-walk-line"></i>
+                        <div class="txt">
+                            <strong>Iniciante</strong>
+                            <span>Treino 1 a 2x na semana</span>
+                        </div>
                     </button>
                     <button class="option-card" onclick="selectOption('nivel', 'avancado', 'step-loading')">
-                        <i class="ri-trophy-line"></i> <span>Já treino pesado</span>
+                        <i class="ri-boxing-line"></i>
+                        <div class="txt">
+                            <strong>Avançado / Atleta</strong>
+                            <span>Treino intenso todos os dias</span>
+                        </div>
                     </button>
                 </div>
             </div>
         </section>
 
         <section id="step-loading" class="screen hidden">
-            <div class="loader-content" style="text-align: center;">
+            <div class="loader-content">
                 <div class="spinner"></div>
-                <h3 id="loading-text" style="font-style: italic;">Analisando suas respostas...</h3>
+                <h3 id="loading-text" class="gradient-text">Conectando com IA...</h3>
+                <p id="loading-sub">Aguarde um momento</p>
             </div>
         </section>
 
         <section id="step-sales" class="screen hidden">
             <div class="sales-card">
-                <span class="tag">SEU TREINO ESTÁ PRONTO</span>
-                <h2 id="plan-name" style="margin: 20px 0; font-style: italic; font-weight: 900; text-transform: uppercase;">PROTOCOLO THIMANNI</h2>
+                <div class="sales-header">
+                    <span class="tag-success">PROTOCOLO GERADO</span>
+                    <h2 class="sales-title">PLANO: <span id="final-plan-name">DEFINIÇÃO TOTAL</span></h2>
+                </div>
                 
-                <div class="result-box">
-                    <p>Com base no seu perfil, criamos uma estratégia de 8 semanas para <span id="result-focus" style="color: var(--accent); font-weight: bold;">transformar seu corpo</span>.</p>
+                <div class="personalization-summary">
+                    <p><i class="ri-user-line"></i> Perfil: <span id="res-sexo">...</span></p>
+                    <p><i class="ri-focus-3-line"></i> Foco Principal: <span id="res-foco" style="color: var(--accent);">...</span></p>
+                    <p><i class="ri-line-chart-line"></i> Meta: <strong>Resultado em 8 Semanas</strong></p>
                 </div>
 
-                <ul class="benefits">
-                    <li><i class="ri-check-double-line"></i> Ficha de Treino PDF</li>
-                    <li><i class="ri-check-double-line"></i> Vídeos de Execução</li>
-                    <li><i class="ri-check-double-line"></i> Acesso Vitalício</li>
+                <div class="offer-box">
+                    <div class="price-old">R$ 197,90</div>
+                    <div class="price-new">R$ 49,90</div>
+                    <span class="offer-tag">OFERTA ÚNICA HOJE</span>
+                </div>
+                
+                <ul class="benefits-list">
+                    <li><i class="ri-checkbox-circle-fill"></i> Treino Personalizado (PDF Mobile)</li>
+                    <li><i class="ri-checkbox-circle-fill"></i> Guia de Alimentação Sugerida</li>
+                    <li><i class="ri-checkbox-circle-fill"></i> Acesso ao App Thimanni</li>
+                    <li><i class="ri-checkbox-circle-fill"></i> Suporte VIP WhatsApp</li>
                 </ul>
 
-                <div class="price">R$ 49,90</div>
-                
-                <button class="btn-primary" onclick="goToPayment()">
-                    QUERO MEU TREINO
+                <button class="btn-primary pulsate" onclick="goToPayment()">
+                    LIBERAR MEU ACESSO AGORA
                 </button>
-                <p class="secure"><i class="ri-lock-2-line"></i> Compra 100% Segura</p>
+                
+                <div class="guarantee">
+                    <img src="https://img.icons8.com/color/48/guarantee.png" alt="Garantia" style="width: 24px;">
+                    <p>Garantia incondicional de 7 dias</p>
+                </div>
             </div>
         </section>
 
         <section id="step-dashboard" class="screen hidden">
-            <div class="dashboard-container">
-                <div class="welcome-header">
-                    <h2>Olá, <span id="user-name" style="color: var(--accent);">Atleta</span>!</h2>
-                    <button onclick="logout()" class="btn-logout">SAIR <i class="ri-logout-box-r-line"></i></button>
-                </div>
+            <div class="dashboard-layout">
+                <header class="dash-header">
+                    <div class="user-info">
+                        <div class="avatar-circle"><i class="ri-user-smile-line"></i></div>
+                        <div>
+                            <small>Bem-vindo(a),</small>
+                            <h3 id="user-name">Aluno</h3>
+                        </div>
+                    </div>
+                    <button onclick="logout()" class="btn-logout"><i class="ri-logout-box-line"></i></button>
+                </header>
 
-                <div class="training-card">
-                    <span class="tag">SEU ACESSO</span>
-                    <h3 id="user-plan-name" style="font-size: 2rem; margin: 15px 0;">Carregando...</h3>
-                    
-                    <div class="actions-row">
-                        <a id="btn-download-pdf" href="#" target="_blank" class="btn-primary disabled" style="text-align:center; text-decoration:none; display:flex; justify-content:center; align-items:center;">
-                            BAIXAR FICHA (PDF)
+                <div class="dash-grid">
+                    <div class="dash-card status-card">
+                        <div class="icon-box"><i class="ri-shield-check-line"></i></div>
+                        <div>
+                            <small>Status da Conta</small>
+                            <strong style="color: #4ade80;">ATIVO / VITALÍCIO</strong>
+                        </div>
+                    </div>
+
+                    <div class="dash-card main-training">
+                        <span class="tag-dash">SEU PROTOCOLO</span>
+                        <h2 id="user-plan-name">Carregando Treino...</h2>
+                        <p class="dash-desc">Focado em hipertrofia e definição muscular.</p>
+                        
+                        <a id="btn-download-pdf" href="#" target="_blank" class="btn-primary btn-dash disabled">
+                            <i class="ri-download-2-line"></i> BAIXAR TREINO EM PDF
                         </a>
+                    </div>
+
+                    <div class="dash-card support-card">
+                        <h3>Precisa de ajuda?</h3>
+                        <p>Fale diretamente com nosso suporte técnico.</p>
+                        <button class="btn-outline">Chamar no WhatsApp</button>
                     </div>
                 </div>
             </div>
@@ -118,21 +235,15 @@
     <div id="login-modal" class="modal hidden">
         <div class="modal-content">
             <span class="close" onclick="toggleModal('login-modal')">&times;</span>
-            
-            <h2 id="modal-title" style="margin-bottom: 20px;">Área do Aluno</h2>
-            
+            <h2 id="modal-title">Área do Aluno</h2>
             <form id="auth-form">
                 <input type="email" id="auth-email" placeholder="Seu E-mail" required>
                 <input type="password" id="auth-password" placeholder="Sua Senha" required>
-                
                 <button type="submit" id="auth-btn" class="btn-primary">ENTRAR</button>
             </form>
-
             <div class="toggle-auth">
                 <span id="toggle-text">Ainda não tem acesso?</span>
-                <a href="#" onclick="toggleAuthMode()">
-                    <span id="toggle-link">Criar conta</span>
-                </a>
+                <a href="#" onclick="toggleAuthMode()"><span id="toggle-link">Criar conta</span></a>
             </div>
         </div>
     </div>
