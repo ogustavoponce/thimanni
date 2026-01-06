@@ -110,7 +110,6 @@
             <div class="quiz-card">
                 <div class="progress-header">PASSO 5 DE 8</div>
                 <h2>Onde vamos executar esse planejamento?</h2>
-                <p class="subtitle">Seja realista, não marque o que você não tem.</p>
                 <div class="options-list">
                     <button class="option-item" onclick="selectOption('local', 'Academia Completa', 'step-8-freq')">
                         <strong>Academia Completa</strong>
@@ -119,7 +118,7 @@
                         <strong>Academia de Condomínio</strong>
                     </button>
                     <button class="option-item" onclick="selectOption('local', 'Em Casa', 'step-8-freq')">
-                        <strong>Em Casa</strong> <small>Peso do corpo e improvisos</small>
+                        <strong>Em Casa</strong>
                     </button>
                 </div>
             </div>
@@ -197,7 +196,7 @@
             <div class="quiz-card">
                 <div class="progress-header">ANÁLISE CONCLUÍDA</div>
                 <h2>Diagnóstico Pronto!</h2>
-                <p class="subtitle">Para liberar seu diagnóstico médico e acessar o plano, crie seu login de aluno abaixo.</p>
+                <p class="subtitle">Crie seu login abaixo para acessar o Painel do Aluno e visualizar seu protocolo.</p>
                 
                 <form id="lead-form" class="inputs-grid">
                     <div class="input-group">
@@ -222,52 +221,12 @@
                     </div>
                     
                     <button type="submit" class="btn-primary">
-                        VER MEU DIAGNÓSTICO <i class="ri-lock-unlock-line"></i>
+                        ACESSAR MEU PAINEL <i class="ri-arrow-right-line"></i>
                     </button>
                 </form>
                 <p style="font-size: 0.8rem; color: #666; text-align: center; margin-top: 15px;">
                     <i class="ri-shield-check-line"></i> Seus dados estão protegidos.
                 </p>
-            </div>
-        </section>
-
-        <section id="step-sales" class="screen hidden">
-            <div class="sales-card">
-                <div class="analysis-box">
-                    <span class="tag-success">ACESSO LIBERADO</span>
-                    <h2 class="sales-title">SEU PLANO ESTÁ PRONTO.</h2>
-                    
-                    <div class="tech-data">
-                        <div class="data-row">
-                            <span>Seu IMC:</span>
-                            <strong id="res-imc" style="color: var(--accent);">--</strong>
-                        </div>
-                        <div class="data-row">
-                            <span>Idade Metabólica:</span>
-                            <strong id="res-idade">-- anos</strong>
-                        </div>
-                        <div class="diagnosis">
-                            <p id="diagnosis-text">Processando resultado...</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="offer-container">
-                    <p class="offer-label">PLANO THIMANNI COMPLETO</p>
-                    <div class="prices">
-                        <span class="old">R$ 197,90</span>
-                        <span class="new">R$ 49,90</span>
-                    </div>
-                    
-                    <button class="btn-primary pulsate" onclick="goToPayment()">
-                        LIBERAR MEU PLANO AGORA
-                    </button>
-                    
-                    <div class="security-icons">
-                        <i class="ri-shield-check-line"></i> Acesso Vitalício
-                        <i class="ri-lock-2-line"></i> Pagamento Seguro
-                    </div>
-                </div>
             </div>
         </section>
 
@@ -277,36 +236,77 @@
                     <div class="user-info">
                         <div class="avatar-circle"><i class="ri-user-smile-line"></i></div>
                         <div>
-                            <small>Bem-vindo(a),</small>
-                            <h3 id="user-name">Aluno</h3>
+                            <small>Painel do Aluno</small>
+                            <h3 id="user-name">Carregando...</h3>
                         </div>
                     </div>
                     <button onclick="logout()" class="btn-logout"><i class="ri-logout-box-r-line"></i> Sair</button>
                 </header>
 
                 <div class="dash-grid">
+                    
                     <div class="dash-card status-card">
-                        <div class="icon-box"><i class="ri-shield-check-line"></i></div>
-                        <div>
-                            <small>Status da Conta</small>
-                            <strong style="color: #4ade80;">ATIVO / VITALÍCIO</strong>
+                        <div class="status-header">
+                            <span class="status-label">STATUS DO PLANO:</span>
+                            <span id="user-status-badge" class="badge-pending">AGUARDANDO ATIVAÇÃO</span>
+                        </div>
+                        <div class="divider"></div>
+                        <div class="status-details">
+                            <p><i class="ri-calendar-check-line"></i> Validade: <span style="color:white">Vitalício</span></p>
+                            <p><i class="ri-file-user-line"></i> Protocolo: <strong style="color:white" id="user-plan-name">Calculando...</strong></p>
                         </div>
                     </div>
 
-                    <div class="dash-card main-training">
-                        <span class="tag-dash">SEU PROTOCOLO</span>
-                        <h2 id="user-plan-name">Carregando Treino...</h2>
-                        <p class="dash-desc">Focado em hipertrofia e definição muscular.</p>
+                    <div class="dash-card main-content-card">
                         
-                        <a id="btn-download-pdf" href="#" target="_blank" class="btn-primary btn-dash disabled">
-                            <i class="ri-download-2-line"></i> BAIXAR TREINO EM PDF
-                        </a>
-                    </div>
+                        <div id="dash-sales-area" class="hidden">
+                            <div class="alert-box">
+                                <i class="ri-alert-line"></i>
+                                <span>Seu protocolo foi gerado, mas ainda não está ativo.</span>
+                            </div>
 
-                    <div class="dash-card support-card">
-                        <h3>Precisa de ajuda?</h3>
-                        <p>Fale diretamente com nosso suporte técnico.</p>
-                        <button class="btn-outline">Chamar no WhatsApp</button>
+                            <div class="diagnosis-box">
+                                <h3><i class="ri-stethoscope-line"></i> Diagnóstico Thimanni</h3>
+                                <div class="data-row">
+                                    <span>IMC Calculado:</span> <strong id="res-imc" style="color: var(--accent)">--</strong>
+                                </div>
+                                <div class="data-row">
+                                    <span>Idade Metabólica:</span> <strong id="res-idade">-- anos</strong>
+                                </div>
+                                <p id="diagnosis-text" class="med-text">Analisando resultados...</p>
+                            </div>
+
+                            <div class="offer-row">
+                                <div class="price-block">
+                                    <span class="old">R$ 197,90</span>
+                                    <span class="new">R$ 49,90</span>
+                                </div>
+                                <button class="btn-primary pulsate" onclick="goToPayment()">
+                                    ATIVAR MEU PLANO AGORA <i class="ri-lock-unlock-line"></i>
+                                </button>
+                            </div>
+                            <p class="secure-text"><i class="ri-shield-check-line"></i> Ambiente Seguro. Ativação Imediata.</p>
+                        </div>
+
+                        <div id="dash-active-area" class="hidden">
+                            <div class="success-box">
+                                <i class="ri-checkbox-circle-line"></i>
+                                <span>Plano Ativo! Bom treino.</span>
+                            </div>
+                            <h2 style="margin: 20px 0;">Seu Treino está pronto para download.</h2>
+                            <p style="color:#888; margin-bottom: 30px;">Clique abaixo para baixar o PDF completo com vídeos demonstrativos.</p>
+                            
+                            <a id="btn-download-pdf" href="#" target="_blank" class="btn-primary">
+                                <i class="ri-download-cloud-2-line"></i> BAIXAR MEU TREINO (PDF)
+                            </a>
+                            
+                            <div class="support-area">
+                                <hr style="border-color: #333; margin: 30px 0;">
+                                <h4>Precisa de suporte?</h4>
+                                <button class="btn-outline">Chamar no WhatsApp</button>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
