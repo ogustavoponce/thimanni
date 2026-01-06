@@ -100,7 +100,7 @@ function startLoadingProcess() {
     }, 1200);
 }
 
-// --- 5. CADASTRO DE LEAD (A CORREÇÃO ESTÁ AQUI) ---
+// --- 5. CADASTRO DE LEAD (BLINDADO - NÃO TRAVA) ---
 const leadForm = document.getElementById('lead-form');
 if(leadForm) {
     leadForm.addEventListener('submit', (e) => {
@@ -122,11 +122,12 @@ if(leadForm) {
         btn.innerText = "GERANDO PLANO...";
         btn.disabled = true;
 
+        // 1. Tenta criar usuário
         auth.createUserWithEmailAndPassword(email, pass)
             .then((cred) => {
                 console.log("Usuário criado no Auth:", cred.user.uid);
                 
-                // Salva no Firestore
+                // 2. Tenta salvar no banco (mas não trava se der erro)
                 return db.collection('usuarios').doc(cred.user.uid).set({
                     nome: name,
                     telefone: phone,
@@ -135,14 +136,15 @@ if(leadForm) {
                     nomeTreino: "Aguardando Pagamento",
                     status: "lead",
                     dataCadastro: new Date()
+                }).catch(err => {
+                    console.error("Erro no banco ignorado para venda:", err);
+                    return true;
                 });
             })
             .then(() => {
-                console.log("Dados salvos no Firestore.");
-                // SUCESSO! Agora forçamos a ida para a venda
+                // 3. Sucesso! Vai para a Venda
                 showResults(name);
                 
-                // Desativa flag e libera botão (apenas visualmente, já trocou de tela)
                 isRegistering = false; 
                 btn.disabled = false;
                 btn.innerText = "VER MEU DIAGNÓSTICO";
@@ -150,7 +152,7 @@ if(leadForm) {
             .catch((error) => {
                 console.error("Erro no cadastro:", error);
                 let msg = "Erro ao cadastrar.";
-                if(error.code === 'auth/email-already-in-use') msg = "E-mail já existe. Tente fazer login.";
+                if(error.code === 'auth/email-already-in-use') msg = "E-mail já cadastrado. Faça login.";
                 alert(msg);
                 
                 isRegistering = false;
@@ -193,7 +195,6 @@ function showResults(userName) {
         if(diagElement) {
             diagElement.innerText = diagnosticoTexto;
         } else {
-            // Fallback se o ID não existir
             const fallback = document.querySelector('.diagnosis p');
             if(fallback) fallback.innerText = diagnosticoTexto;
         }
@@ -203,14 +204,14 @@ function showResults(userName) {
 
     } catch (err) {
         console.error("Erro ao mostrar resultados:", err);
-        // Se der erro, manda pra venda mesmo assim pra não perder o cliente
         nextStep('step-sales'); 
     }
 }
 
 function goToPayment() {
+    // AQUI VOCÊ COLOCA O LINK DO CHECKOUT DA KIWIFY/HOTMART
     alert("Redirecionando para o Checkout...");
-    // window.location.href = "SEU_LINK_AQUI";
+    // window.location.href = "https://...";
 }
 
 // --- 7. AUTH STATE & LOGIN ---
@@ -248,7 +249,6 @@ if(authForm) {
                 btn.innerText = "ENTRAR";
             }).catch(err => { alert("Erro: " + err.message); btn.innerText = "ENTRAR"; });
         } else {
-            // Cadastro via Modal (Raro, mas possível)
             auth.createUserWithEmailAndPassword(email, pass).then((cred) => {
                 return db.collection('usuarios').doc(cred.user.uid).set({
                     email: email,
@@ -272,14 +272,10 @@ auth.onAuthStateChanged((user) => {
     const navBtn = document.querySelector('.btn-login-nav');
     
     if (user) {
-        // Se estivermos no meio do cadastro (flag true), NÃO faça nada,
-        // deixe a função do formulário controlar a tela.
         if (isRegistering) {
-            console.log("Usuário criado, aguardando transição manual...");
+            // Se está se cadastrando agora, não atrapalhe a venda
             return;
         }
-
-        console.log("Usuário logado detectado.");
         
         // Atualiza Menu
         if(navBtn) {
@@ -305,7 +301,6 @@ auth.onAuthStateChanged((user) => {
         });
 
     } else {
-        // Deslogado
         if(navBtn) {
             navBtn.innerHTML = '<i class="ri-user-line"></i> Área do Aluno';
             navBtn.onclick = () => toggleModal('login-modal');
