@@ -64,7 +64,11 @@ function validateBio(nextStepId) {
     const a = document.getElementById('input-altura').value;
 
     if (!i || !p || !a) {
-        alert("Preencha todos os dados.");
+        // Feedback visual simples
+        const btn = document.querySelector('#step-2-bio button');
+        const original = btn.innerHTML;
+        btn.innerHTML = "PREENCHA TUDO!";
+        setTimeout(() => btn.innerHTML = original, 2000);
         return;
     }
     userData.idade = i;
@@ -113,10 +117,12 @@ if(leadForm) {
         const passConf = document.getElementById('reg-pass-conf').value;
         const btn = e.target.querySelector('button');
 
-        if(pass !== passConf) { alert("Senhas diferentes!"); return; }
-        if(pass.length < 6) { alert("Senha curta (mín 6)."); return; }
+        if(pass !== passConf) { 
+            alert("Senhas diferentes!"); 
+            return; 
+        }
 
-        btn.innerText = "ACESSANDO PAINEL...";
+        btn.innerText = "CRIANDO ACESSO...";
         btn.disabled = true;
 
         auth.createUserWithEmailAndPassword(email, pass)
@@ -127,7 +133,7 @@ if(leadForm) {
                     email: email,
                     quizData: userData,
                     nomeTreino: "Treino Personalizado",
-                    status: "lead", // Entra como LEAD
+                    status: "lead",
                     dataCadastro: new Date()
                 }).catch(err => {
                     console.error("Erro banco:", err);
@@ -135,7 +141,6 @@ if(leadForm) {
                 });
             })
             .then(() => {
-                // Sucesso: Vai para o Dashboard e Renderiza a Venda
                 renderDashboardSales(name);
                 nextStep('step-dashboard');
                 
@@ -154,18 +159,15 @@ if(leadForm) {
     });
 }
 
-// --- 6. RENDERIZADOR DO DASHBOARD DE VENDAS ---
+// --- 6. DASHBOARD LOGIC ---
 function renderDashboardSales(userName) {
-    // Esconde área de download, mostra área de venda
     document.getElementById('dash-active-area').classList.add('hidden');
     document.getElementById('dash-sales-area').classList.remove('hidden');
 
-    // Atualiza status badge
     const badge = document.getElementById('user-status-badge');
     badge.className = 'badge-pending';
     badge.innerText = "AGUARDANDO ATIVAÇÃO";
 
-    // Cálculo IMC
     let alturaMetros = userData.altura > 0 ? userData.altura / 100 : 1.70;
     let pesoReal = userData.peso > 0 ? userData.peso : 70;
     let imc = (pesoReal / (alturaMetros * alturaMetros)).toFixed(1);
@@ -173,25 +175,30 @@ function renderDashboardSales(userName) {
     document.getElementById('res-imc').innerText = imc;
     document.getElementById('res-idade').innerText = userData.idade + " anos";
 
-    // Lógica Médica
     let diagnosticoTexto = "";
     let prefixo = userName ? `${userName.split(' ')[0]}, ` : "";
 
     if (imc < 18.5) {
-        diagnosticoTexto = `"${prefixo}seu IMC de ${imc} indica metabolismo acelerado. O protocolo foca em carga alta para ${userData.foco}."`;
+        diagnosticoTexto = `"${prefixo}seu IMC de ${imc} indica metabolismo acelerado. Protocolo de carga alta."`;
     } else if (imc >= 18.5 && imc < 25) {
-        diagnosticoTexto = `"${prefixo}seu IMC de ${imc} é equilibrado. Focaremos em definição muscular de ${userData.foco}."`;
+        diagnosticoTexto = `"${prefixo}seu IMC de ${imc} é equilibrado. Foco total em definição."`;
     } else if (imc >= 25 && imc < 30) {
-        diagnosticoTexto = `"${prefixo}com IMC de ${imc}, precisamos ativar queima de gordura e força para ${userData.foco}."`;
+        diagnosticoTexto = `"${prefixo}com IMC de ${imc}, ativaremos a queima de gordura + força."`;
     } else {
-        diagnosticoTexto = `"${prefixo}atenção ao IMC de ${imc}. O plano protege articulações enquanto secamos."`;
+        diagnosticoTexto = `"${prefixo}atenção ao IMC de ${imc}. Plano seguro para articulações."`;
     }
 
     document.getElementById('diagnosis-text').innerText = diagnosticoTexto;
 }
 
 function goToPayment() {
-    alert("Redirecionando para o Checkout...");
+    const btn = document.querySelector('.offer-box-dash button');
+    btn.innerHTML = "REDIRECIONANDO...";
+    setTimeout(() => {
+        alert("Indo para o Checkout...");
+        // window.location.href = "...";
+        btn.innerHTML = "ATIVAR MEU PLANO AGORA";
+    }, 1000);
 }
 
 // --- 7. MODAL LOGIN ---
@@ -226,34 +233,27 @@ function logout() {
     auth.signOut().then(() => nextStep('step-home')); 
 }
 
-// --- 8. OBSERVADOR DE ESTADO (AUTH) ---
+// --- 8. STATE OBSERVER ---
 auth.onAuthStateChanged((user) => {
     const navBtn = document.querySelector('.btn-login-nav');
     
     if (user) {
         if (isRegistering) return;
         
-        console.log("Logado. Verificando acesso...");
-        
         db.collection('usuarios').doc(user.uid).get().then(doc => {
             if(doc.exists) {
                 const data = doc.data();
                 
-                // Nome
                 const elName = document.getElementById('user-name');
                 if(elName) elName.innerText = data.nome ? data.nome.split(' ')[0] : "Aluno";
                 
-                // Plano Nome
                 const elPlan = document.getElementById('user-plan-name');
                 if(elPlan) elPlan.innerText = data.nomeTreino || "Analisando...";
 
                 if (data.status === 'lead') {
-                    // LEAD: Renderiza a tela de Venda DENTRO do Dashboard
-                    // Tenta recuperar dados do quiz salvos no banco se o userData estiver vazio
                     if(data.quizData) userData = data.quizData;
                     renderDashboardSales(data.nome);
                 } else {
-                    // ATIVO: Mostra Download
                     document.getElementById('dash-sales-area').classList.add('hidden');
                     document.getElementById('dash-active-area').classList.remove('hidden');
                     
@@ -268,12 +268,10 @@ auth.onAuthStateChanged((user) => {
                     }
                 }
                 
-                // Só redireciona se não estivermos no fluxo de quiz
                 const current = document.querySelector('.screen.active');
                 if(current.id === 'step-home' || current.id === 'step-dashboard') {
                     nextStep('step-dashboard');
                 }
-
             } else {
                 nextStep('step-dashboard');
             }

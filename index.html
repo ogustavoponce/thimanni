@@ -33,8 +33,7 @@
         <section id="step-1-gender" class="screen hidden">
             <div class="quiz-card">
                 <div class="progress-header">PASSO 1 DE 8</div>
-                <h2>Vamos começar. Qual é o seu Gênero Biológico?</h2>
-                <p class="subtitle">Necessário para a seleção hormonal e estrutural do treino.</p>
+                <h2>Qual é o seu Gênero Biológico?</h2>
                 <div class="options-row">
                     <button class="option-square" onclick="selectOption('sexo', 'Masculino', 'step-2-bio')">
                         <i class="ri-men-line"></i> <span>Masculino</span>
@@ -50,8 +49,6 @@
             <div class="quiz-card">
                 <div class="progress-header">PASSO 2 DE 8</div>
                 <h2>Seus Dados Biométricos</h2>
-                <p class="subtitle">Não minta. Preciso disso para calcular sua carga e taxa metabólica.</p>
-                
                 <div class="inputs-grid">
                     <div class="input-group">
                         <label>Sua Idade (anos)</label>
@@ -91,7 +88,7 @@
         <section id="step-6-history" class="screen hidden">
             <div class="quiz-card">
                 <div class="progress-header">PASSO 4 DE 8</div>
-                <h2>Seja sincero com seu treinador: Como está o seu ritmo atual?</h2>
+                <h2>Seja sincero: Como está o seu ritmo atual?</h2>
                 <div class="options-list">
                     <button class="option-item" onclick="selectOption('nivel', 'Sedentário', 'step-7-local')">
                         <strong>Sedentário</strong> <small>Não treino há meses/anos</small>
@@ -100,7 +97,7 @@
                         <strong>Iniciante</strong> <small>Treino, mas sem constância</small>
                     </button>
                     <button class="option-item" onclick="selectOption('nivel', 'Avançado', 'step-7-local')">
-                        <strong>Intermediário/Avançado</strong> <small>Treino pesado há mais de 1 ano</small>
+                        <strong>Avançado</strong> <small>Treino pesado há mais de 1 ano</small>
                     </button>
                 </div>
             </div>
@@ -109,12 +106,12 @@
         <section id="step-7-local" class="screen hidden">
             <div class="quiz-card">
                 <div class="progress-header">PASSO 5 DE 8</div>
-                <h2>Onde vamos executar esse planejamento?</h2>
+                <h2>Onde vamos treinar?</h2>
                 <div class="options-list">
                     <button class="option-item" onclick="selectOption('local', 'Academia Completa', 'step-8-freq')">
                         <strong>Academia Completa</strong>
                     </button>
-                    <button class="option-item" onclick="selectOption('local', 'Academia de Condomínio', 'step-8-freq')">
+                    <button class="option-item" onclick="selectOption('local', 'Condomínio', 'step-8-freq')">
                         <strong>Academia de Condomínio</strong>
                     </button>
                     <button class="option-item" onclick="selectOption('local', 'Em Casa', 'step-8-freq')">
@@ -127,16 +124,16 @@
         <section id="step-8-freq" class="screen hidden">
             <div class="quiz-card">
                 <div class="progress-header">PASSO 6 DE 8</div>
-                <h2>Quantos dias na semana você REALMENTE vai dedicar ao meu treino?</h2>
+                <h2>Dias disponíveis por semana:</h2>
                 <div class="options-list">
                     <button class="option-item" onclick="selectOption('dias', '2 a 3 dias', 'step-9-injury')">
-                        <strong>2 a 3 dias</strong> <small>Treinos intensos e curtos</small>
+                        <strong>2 a 3 dias</strong>
                     </button>
                     <button class="option-item" onclick="selectOption('dias', '4 dias', 'step-9-injury')">
-                        <strong>4 dias</strong> <small>Divisão AB ou ABCD</small>
+                        <strong>4 dias</strong>
                     </button>
                     <button class="option-item" onclick="selectOption('dias', '5 a 6 dias', 'step-9-injury')">
-                        <strong>5 a 6 dias</strong> <small>Foco total / ABCDE</small>
+                        <strong>5 a 6 dias</strong>
                     </button>
                 </div>
             </div>
@@ -145,7 +142,7 @@
         <section id="step-9-injury" class="screen hidden">
             <div class="quiz-card">
                 <div class="progress-header">PASSO 7 DE 8</div>
-                <h2>Existe alguma restrição que me impeça de passar exercícios de alto impacto?</h2>
+                <h2>Possui lesões ou dores?</h2>
                 <div class="options-list">
                     <button class="option-item" onclick="selectOption('lesao', 'Nenhuma', 'step-10-focus')">
                         <strong>Nenhuma, estou 100%</strong>
@@ -154,7 +151,7 @@
                         <strong>Tenho dores no Joelho</strong>
                     </button>
                     <button class="option-item" onclick="selectOption('lesao', 'Coluna', 'step-10-focus')">
-                        <strong>Tenho dores na Coluna/Lombar</strong>
+                        <strong>Tenho dores na Coluna</strong>
                     </button>
                     <button class="option-item" onclick="selectOption('lesao', 'Ombro', 'step-10-focus')">
                         <strong>Tenho dores no Ombro</strong>
@@ -166,29 +163,29 @@
         <section id="step-10-focus" class="screen hidden">
             <div class="quiz-card">
                 <div class="progress-header">PASSO FINAL</div>
-                <h2>Para fechar: Qual parte do corpo você quer que eu dê ênfase total?</h2>
+                <h2>Qual parte do corpo quer dar ênfase?</h2>
                 <div class="options-list">
                     <button class="option-item" onclick="selectOption('foco', 'Abdômen', 'step-loading')">
-                        <strong>Abdômen</strong> <small>Tanquinho/Secar barriga</small>
+                        <strong>Abdômen</strong>
                     </button>
                     <button class="option-item" onclick="selectOption('foco', 'Superior', 'step-loading')">
-                        <strong>Peitoral e Braços</strong> <small>Tronco superior</small>
+                        <strong>Peitoral e Braços</strong>
                     </button>
                     <button class="option-item" onclick="selectOption('foco', 'Inferior', 'step-loading')">
-                        <strong>Pernas e Glúteos</strong> <small>Membros inferiores</small>
+                        <strong>Pernas e Glúteos</strong>
                     </button>
                     <button class="option-item" onclick="selectOption('foco', 'Geral', 'step-loading')">
-                        <strong>Corpo Inteiro</strong> <small>Harmonia geral</small>
+                        <strong>Corpo Inteiro</strong>
                     </button>
                 </div>
             </div>
         </section>
 
-        <section id="step-loading" class="screen hidden">
+        <section id="step-loading" class="screen hidden center-content">
             <div class="loader-content">
                 <div class="spinner"></div>
                 <h3 id="loading-txt" class="gradient-text">Calculando IMC...</h3>
-                <p id="loading-sub">Aguarde...</p>
+                <p id="loading-sub">Aguarde um momento...</p>
             </div>
         </section>
 
@@ -196,7 +193,7 @@
             <div class="quiz-card">
                 <div class="progress-header">ANÁLISE CONCLUÍDA</div>
                 <h2>Diagnóstico Pronto!</h2>
-                <p class="subtitle">Crie seu login abaixo para acessar o Painel do Aluno e visualizar seu protocolo.</p>
+                <p class="subtitle">Crie seu login para acessar o Painel e ver seu resultado.</p>
                 
                 <form id="lead-form" class="inputs-grid">
                     <div class="input-group">
@@ -204,15 +201,15 @@
                         <input type="text" id="reg-name" placeholder="Seu nome" required>
                     </div>
                     <div class="input-group">
-                        <label>WhatsApp / Celular</label>
+                        <label>WhatsApp</label>
                         <input type="tel" id="reg-phone" placeholder="(XX) 99999-9999" required>
                     </div>
                     <div class="input-group">
-                        <label>Seu Melhor E-mail</label>
+                        <label>E-mail</label>
                         <input type="email" id="reg-email" placeholder="exemplo@email.com" required>
                     </div>
                     <div class="input-group">
-                        <label>Crie uma Senha</label>
+                        <label>Senha</label>
                         <input type="password" id="reg-pass" placeholder="Mínimo 6 caracteres" required>
                     </div>
                     <div class="input-group">
@@ -224,9 +221,6 @@
                         ACESSAR MEU PAINEL <i class="ri-arrow-right-line"></i>
                     </button>
                 </form>
-                <p style="font-size: 0.8rem; color: #666; text-align: center; margin-top: 15px;">
-                    <i class="ri-shield-check-line"></i> Seus dados estão protegidos.
-                </p>
             </div>
         </section>
 
@@ -243,17 +237,28 @@
                     <button onclick="logout()" class="btn-logout"><i class="ri-logout-box-r-line"></i> Sair</button>
                 </header>
 
-                <div class="dash-grid">
+                <div class="dash-stack">
                     
                     <div class="dash-card status-card">
                         <div class="status-header">
-                            <span class="status-label">STATUS DO PLANO:</span>
+                            <span class="status-label">STATUS ATUAL:</span>
                             <span id="user-status-badge" class="badge-pending">AGUARDANDO ATIVAÇÃO</span>
                         </div>
-                        <div class="divider"></div>
-                        <div class="status-details">
-                            <p><i class="ri-calendar-check-line"></i> Validade: <span style="color:white">Vitalício</span></p>
-                            <p><i class="ri-file-user-line"></i> Protocolo: <strong style="color:white" id="user-plan-name">Calculando...</strong></p>
+                        <div class="status-grid">
+                            <div class="stat-item">
+                                <i class="ri-calendar-check-line"></i>
+                                <div>
+                                    <small>Validade</small>
+                                    <strong>Vitalício</strong>
+                                </div>
+                            </div>
+                            <div class="stat-item">
+                                <i class="ri-file-list-3-line"></i>
+                                <div>
+                                    <small>Protocolo</small>
+                                    <strong id="user-plan-name">Calculando...</strong>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -261,49 +266,47 @@
                         
                         <div id="dash-sales-area" class="hidden">
                             <div class="alert-box">
-                                <i class="ri-alert-line"></i>
-                                <span>Seu protocolo foi gerado, mas ainda não está ativo.</span>
+                                <i class="ri-error-warning-line"></i>
+                                <span>Seu protocolo foi gerado. Ative para liberar o acesso.</span>
                             </div>
 
                             <div class="diagnosis-box">
-                                <h3><i class="ri-stethoscope-line"></i> Diagnóstico Thimanni</h3>
+                                <h3><i class="ri-heart-pulse-line"></i> Diagnóstico Thimanni</h3>
                                 <div class="data-row">
                                     <span>IMC Calculado:</span> <strong id="res-imc" style="color: var(--accent)">--</strong>
                                 </div>
                                 <div class="data-row">
                                     <span>Idade Metabólica:</span> <strong id="res-idade">-- anos</strong>
                                 </div>
-                                <p id="diagnosis-text" class="med-text">Analisando resultados...</p>
+                                <p id="diagnosis-text" class="med-text">Analisando...</p>
                             </div>
 
-                            <div class="offer-row">
-                                <div class="price-block">
+                            <div class="offer-box-dash">
+                                <div class="price-display">
                                     <span class="old">R$ 197,90</span>
                                     <span class="new">R$ 49,90</span>
                                 </div>
                                 <button class="btn-primary pulsate" onclick="goToPayment()">
-                                    ATIVAR MEU PLANO AGORA <i class="ri-lock-unlock-line"></i>
+                                    ATIVAR MEU PLANO AGORA
                                 </button>
+                                <p class="secure-icon"><i class="ri-lock-fill"></i> Pagamento Seguro</p>
                             </div>
-                            <p class="secure-text"><i class="ri-shield-check-line"></i> Ambiente Seguro. Ativação Imediata.</p>
                         </div>
 
                         <div id="dash-active-area" class="hidden">
                             <div class="success-box">
-                                <i class="ri-checkbox-circle-line"></i>
-                                <span>Plano Ativo! Bom treino.</span>
+                                <i class="ri-checkbox-circle-fill"></i>
+                                <span>Plano Ativo com Sucesso!</span>
                             </div>
-                            <h2 style="margin: 20px 0;">Seu Treino está pronto para download.</h2>
-                            <p style="color:#888; margin-bottom: 30px;">Clique abaixo para baixar o PDF completo com vídeos demonstrativos.</p>
-                            
-                            <a id="btn-download-pdf" href="#" target="_blank" class="btn-primary">
-                                <i class="ri-download-cloud-2-line"></i> BAIXAR MEU TREINO (PDF)
-                            </a>
-                            
+                            <div class="download-area">
+                                <h2>Seu Treino está pronto.</h2>
+                                <p>Clique abaixo para baixar o PDF completo com vídeos.</p>
+                                <a id="btn-download-pdf" href="#" target="_blank" class="btn-primary">
+                                    <i class="ri-download-cloud-2-line"></i> BAIXAR PDF
+                                </a>
+                            </div>
                             <div class="support-area">
-                                <hr style="border-color: #333; margin: 30px 0;">
-                                <h4>Precisa de suporte?</h4>
-                                <button class="btn-outline">Chamar no WhatsApp</button>
+                                <button class="btn-outline">Falar com Suporte</button>
                             </div>
                         </div>
 
