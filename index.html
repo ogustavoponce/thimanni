@@ -272,18 +272,42 @@
         </section>
 
         <section id="step-dashboard" class="screen hidden">
-            <div class="dashboard-container">
-                <div class="welcome-header">
-                    <h2>Bem-vindo, <span id="user-name">Aluno</span>!</h2>
-                    <button onclick="logout()" class="btn-logout">Sair</button>
-                </div>
-                <div class="training-card">
-                    <span class="tag">SEU PLANO ATIVO</span>
-                    <h3 id="user-plan-name">Carregando...</h3>
-                    <p style="color:#888; margin-bottom:20px;">Protocolo atualizado disponível.</p>
-                    <a id="btn-download-pdf" href="#" class="btn-primary disabled">
-                        <i class="ri-download-2-line"></i> BAIXAR MEU TREINO (PDF)
-                    </a>
+            <div class="dashboard-layout">
+                <header class="dash-header">
+                    <div class="user-info">
+                        <div class="avatar-circle"><i class="ri-user-smile-line"></i></div>
+                        <div>
+                            <small>Bem-vindo(a),</small>
+                            <h3 id="user-name">Aluno</h3>
+                        </div>
+                    </div>
+                    <button onclick="logout()" class="btn-logout"><i class="ri-logout-box-r-line"></i> Sair</button>
+                </header>
+
+                <div class="dash-grid">
+                    <div class="dash-card status-card">
+                        <div class="icon-box"><i class="ri-shield-check-line"></i></div>
+                        <div>
+                            <small>Status da Conta</small>
+                            <strong style="color: #4ade80;">ATIVO / VITALÍCIO</strong>
+                        </div>
+                    </div>
+
+                    <div class="dash-card main-training">
+                        <span class="tag-dash">SEU PROTOCOLO</span>
+                        <h2 id="user-plan-name">Carregando Treino...</h2>
+                        <p class="dash-desc">Focado em hipertrofia e definição muscular.</p>
+                        
+                        <a id="btn-download-pdf" href="#" target="_blank" class="btn-primary btn-dash disabled">
+                            <i class="ri-download-2-line"></i> BAIXAR TREINO EM PDF
+                        </a>
+                    </div>
+
+                    <div class="dash-card support-card">
+                        <h3>Precisa de ajuda?</h3>
+                        <p>Fale diretamente com nosso suporte técnico.</p>
+                        <button class="btn-outline">Chamar no WhatsApp</button>
+                    </div>
                 </div>
             </div>
         </section>
@@ -300,7 +324,7 @@
             </form>
             <div class="toggle-auth">
                 <span id="toggle-text">Ainda não é aluno?</span>
-                <a href="#" onclick="toggleAuthMode()"><span id="toggle-link">Criar conta</span></a>
+                <a href="#" onclick="startQuizFlow()"><span id="toggle-link">Criar conta (Fazer Quiz)</span></a>
             </div>
         </div>
     </div>

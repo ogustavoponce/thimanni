@@ -29,12 +29,12 @@ let userData = {
     lesao: 'Nenhuma',
     foco: 'Geral'
 };
-// Flag para impedir que o AuthStateChanged jogue pro dashboard durante o cadastro
+// Flag para impedir redirecionamento durante cadastro
 let isRegistering = false; 
 
 // --- 3. NAVEGAÇÃO ---
 function nextStep(stepId) {
-    console.log("Indo para tela:", stepId);
+    console.log("Navegando para:", stepId);
     document.querySelectorAll('.screen').forEach(el => {
         el.classList.remove('active');
         el.classList.add('hidden');
@@ -43,9 +43,16 @@ function nextStep(stepId) {
     if(next){
         next.classList.remove('hidden');
         next.classList.add('active');
+        window.scrollTo(0, 0); // Rola para o topo ao mudar de tela
     } else {
         console.error("Tela não encontrada:", stepId);
     }
+}
+
+// Inicia o Quiz vindo do Modal de Login
+function startQuizFlow() {
+    toggleModal('login-modal');
+    nextStep('step-1-gender');
 }
 
 // Opção Simples
@@ -100,14 +107,13 @@ function startLoadingProcess() {
     }, 1200);
 }
 
-// --- 5. CADASTRO DE LEAD (BLINDADO - NÃO TRAVA) ---
+// --- 5. CADASTRO DE LEAD (BLINDADO) ---
 const leadForm = document.getElementById('lead-form');
 if(leadForm) {
     leadForm.addEventListener('submit', (e) => {
         e.preventDefault();
         
-        // Ativa a flag para travar redirecionamentos automáticos
-        isRegistering = true;
+        isRegistering = true; // Trava o observador de login
 
         const name = document.getElementById('reg-name').value;
         const phone = document.getElementById('reg-phone').value;
@@ -122,19 +128,16 @@ if(leadForm) {
         btn.innerText = "GERANDO PLANO...";
         btn.disabled = true;
 
-        // 1. Tenta criar usuário
         auth.createUserWithEmailAndPassword(email, pass)
             .then((cred) => {
-                console.log("Usuário criado no Auth:", cred.user.uid);
-                
-                // 2. Tenta salvar no banco (mas não trava se der erro)
+                // Tenta salvar no banco (mas não trava se der erro)
                 return db.collection('usuarios').doc(cred.user.uid).set({
                     nome: name,
                     telefone: phone,
                     email: email,
                     quizData: userData,
                     nomeTreino: "Aguardando Pagamento",
-                    status: "lead",
+                    status: "lead", // Marcado como LEAD
                     dataCadastro: new Date()
                 }).catch(err => {
                     console.error("Erro no banco ignorado para venda:", err);
@@ -142,10 +145,10 @@ if(leadForm) {
                 });
             })
             .then(() => {
-                // 3. Sucesso! Vai para a Venda
+                // Sucesso! Vai para a Venda
                 showResults(name);
                 
-                isRegistering = false; 
+                isRegistering = false; // Destrava
                 btn.disabled = false;
                 btn.innerText = "VER MEU DIAGNÓSTICO";
             })
@@ -165,8 +168,6 @@ if(leadForm) {
 // --- 6. EXIBIÇÃO DO RESULTADO (VENDA) ---
 function showResults(userName) {
     try {
-        console.log("Calculando resultados...");
-
         // Proteção contra divisão por zero
         let alturaMetros = userData.altura > 0 ? userData.altura / 100 : 1.70;
         let pesoReal = userData.peso > 0 ? userData.peso : 70;
@@ -194,9 +195,6 @@ function showResults(userName) {
         const diagElement = document.getElementById('diagnosis-text');
         if(diagElement) {
             diagElement.innerText = diagnosticoTexto;
-        } else {
-            const fallback = document.querySelector('.diagnosis p');
-            if(fallback) fallback.innerText = diagnosticoTexto;
         }
 
         // Manda para a venda
@@ -209,30 +207,13 @@ function showResults(userName) {
 }
 
 function goToPayment() {
-    // AQUI VOCÊ COLOCA O LINK DO CHECKOUT DA KIWIFY/HOTMART
     alert("Redirecionando para o Checkout...");
-    // window.location.href = "https://...";
 }
 
-// --- 7. AUTH STATE & LOGIN ---
-let isLoginMode = true;
-
+// --- 7. MODAL DE LOGIN (Lógica Simples) ---
 function toggleModal(modalId) { document.getElementById(modalId).classList.toggle('hidden'); }
-function toggleAuthMode() {
-    isLoginMode = !isLoginMode;
-    const btn = document.getElementById('auth-btn');
-    const title = document.getElementById('modal-title');
-    
-    if (isLoginMode) {
-        title.innerText = "Acesso Thimanni";
-        btn.innerText = "ENTRAR";
-    } else {
-        title.innerText = "Criar Nova Conta";
-        btn.innerText = "CADASTRAR";
-    }
-}
 
-// Listener do Login (Menu)
+// --- 8. LOGIN E ROTEAMENTO INTELIGENTE ---
 const authForm = document.getElementById('auth-form');
 if(authForm) {
     authForm.addEventListener('submit', (e) => {
@@ -241,25 +222,21 @@ if(authForm) {
         const pass = document.getElementById('auth-password').value;
         const btn = document.getElementById('auth-btn');
 
-        btn.innerText = "...";
+        btn.innerText = "ENTRANDO...";
+        btn.disabled = true;
 
-        if (isLoginMode) {
-            auth.signInWithEmailAndPassword(email, pass).then(() => {
+        auth.signInWithEmailAndPassword(email, pass)
+            .then(() => {
                 toggleModal('login-modal');
+                // O roteamento acontece no onAuthStateChanged
                 btn.innerText = "ENTRAR";
-            }).catch(err => { alert("Erro: " + err.message); btn.innerText = "ENTRAR"; });
-        } else {
-            auth.createUserWithEmailAndPassword(email, pass).then((cred) => {
-                return db.collection('usuarios').doc(cred.user.uid).set({
-                    email: email,
-                    status: "novo"
-                });
-            }).then(() => {
-                toggleModal('login-modal');
-                alert("Conta criada!");
-                btn.innerText = "CADASTRAR";
+                btn.disabled = false;
+            })
+            .catch(err => { 
+                alert("Erro: " + err.message); 
+                btn.innerText = "ENTRAR"; 
+                btn.disabled = false;
             });
-        }
     });
 }
 
@@ -267,40 +244,66 @@ function logout() {
     auth.signOut().then(() => nextStep('step-home')); 
 }
 
-// Observador de Login
+// --- 9. OBSERVADOR DE ESTADO (O CÉREBRO DO APP) ---
 auth.onAuthStateChanged((user) => {
     const navBtn = document.querySelector('.btn-login-nav');
     
     if (user) {
-        if (isRegistering) {
-            // Se está se cadastrando agora, não atrapalhe a venda
-            return;
-        }
+        // Se estivermos no meio do cadastro (flag true), o fluxo do cadastro manda pra Venda.
+        if (isRegistering) return;
         
-        // Atualiza Menu
-        if(navBtn) {
-            navBtn.innerHTML = '<i class="ri-dashboard-line"></i> Painel';
-            navBtn.onclick = () => nextStep('step-dashboard');
-        }
+        console.log("Usuário detectado. Verificando status...");
 
-        // Carrega dados para o Dashboard
+        // Busca dados no Firestore para saber se é LEAD ou ALUNO
         db.collection('usuarios').doc(user.uid).get().then(doc => {
             if(doc.exists) {
                 const data = doc.data();
+                
+                // Atualiza Nome na Interface
                 const elName = document.getElementById('user-name');
+                if(elName) elName.innerText = data.nome ? data.nome.split(' ')[0] : "Aluno";
+
+                // Atualiza Treino no Dashboard
                 const elPlan = document.getElementById('user-plan-name');
                 const btnDown = document.getElementById('btn-download-pdf');
-
-                if(elName) elName.innerText = data.nome ? data.nome.split(' ')[0] : "Aluno";
                 if(elPlan) elPlan.innerText = data.nomeTreino || "Analisando...";
                 if(btnDown && data.linkPdf) {
                     btnDown.href = data.linkPdf;
                     btnDown.classList.remove('disabled');
                 }
+
+                // ROTEAMENTO: 
+                // Se status for 'lead' (não pagou) -> Vai pra Venda (mas precisa recalcular/mostrar venda)
+                // Se status for 'active' -> Vai pro Dashboard
+                if (data.status === 'lead') {
+                    // Como ele já fez o quiz antes, mandamos para a venda.
+                    // Idealmente, recarregaríamos os dados do quiz, mas para simplificar, vamos para venda.
+                    // Se os dados do quiz estiverem na memória, showResults funciona. 
+                    // Se recarregou a página, pode dar erro de IMC vazio, então mandamos pro Dashboard com aviso.
+                    if (userData.idade > 0) {
+                        showResults(data.nome);
+                    } else {
+                        // Se perdeu os dados, manda pro dashboard "limitado" ou home
+                         nextStep('step-sales'); // Tenta mostrar a venda
+                    }
+                } else {
+                    nextStep('step-dashboard');
+                }
+
+            } else {
+                // Usuário sem dados (Erro) -> Manda pro Dashboard vazio
+                nextStep('step-dashboard');
             }
         });
 
+        // Atualiza Botão do Menu
+        if(navBtn) {
+            navBtn.innerHTML = '<i class="ri-dashboard-line"></i> Painel';
+            navBtn.onclick = () => nextStep('step-dashboard');
+        }
+
     } else {
+        // Deslogado
         if(navBtn) {
             navBtn.innerHTML = '<i class="ri-user-line"></i> Área do Aluno';
             navBtn.onclick = () => toggleModal('login-modal');
