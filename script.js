@@ -1,4 +1,4 @@
-// --- 1. CONFIGURAÇÃO FIREBASE (MANTENHA A SUA REAL AQUI!) ---
+// --- 1. CONFIGURAÇÃO FIREBASE (COLOQUE SUAS CHAVES REAIS AQUI) ---
 const firebaseConfig = {
     apiKey: "AIzaSyBKRf-fSGJvYO8aZlQfxNbBMdWUXLZP9dA",
     authDomain: "thimanni-bbd0d.firebaseapp.com",
@@ -10,45 +10,49 @@ const firebaseConfig = {
 };
 
 // Inicializa Firebase
-firebase.initializeApp(firebaseConfig);
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// --- 2. VARIÁVEIS DO USUÁRIO ---
+// --- 2. VARIÁVEIS GLOBAIS ---
 let userData = {
-    sexo: '',
-    idade: 0,
-    peso: 0,
-    altura: 0,
-    meta: '',
-    nivel: '',
-    local: '',
-    dias: '',
-    lesao: '',
-    foco: ''
+    sexo: 'Masculino',
+    idade: 25,
+    peso: 70,
+    altura: 170,
+    meta: 'Definição',
+    nivel: 'Iniciante',
+    local: 'Academia',
+    dias: '4 dias',
+    lesao: 'Nenhuma',
+    foco: 'Geral'
 };
+// Flag para impedir que o AuthStateChanged jogue pro dashboard durante o cadastro
+let isRegistering = false; 
 
-// --- 3. NAVEGAÇÃO E QUIZ ---
+// --- 3. NAVEGAÇÃO ---
 function nextStep(stepId) {
-    // Esconde todas as telas
+    console.log("Indo para tela:", stepId);
     document.querySelectorAll('.screen').forEach(el => {
         el.classList.remove('active');
         el.classList.add('hidden');
     });
-    // Mostra a desejada
     const next = document.getElementById(stepId);
     if(next){
         next.classList.remove('hidden');
         next.classList.add('active');
+    } else {
+        console.error("Tela não encontrada:", stepId);
     }
 }
 
 // Opção Simples
 function selectOption(category, value, nextStepId) {
     userData[category] = value;
-    
     if (nextStepId === 'step-loading') {
-        startLoadingProcess(); // Vai para o cálculo
+        startLoadingProcess();
     } else {
         nextStep(nextStepId);
     }
@@ -61,51 +65,50 @@ function validateBio(nextStepId) {
     const a = document.getElementById('input-altura').value;
 
     if (!i || !p || !a) {
-        alert("Precisamos desses dados para calcular seu protocolo.");
+        alert("Preencha todos os dados para o cálculo funcionar.");
         return;
     }
-
     userData.idade = i;
     userData.peso = p;
     userData.altura = a;
     nextStep(nextStepId);
 }
 
-// --- 4. LOADING E CÁLCULO FAKE (Show) ---
+// --- 4. LOADING ---
 function startLoadingProcess() {
     nextStep('step-loading');
-    
-    const title = document.getElementById('loading-txt');
+    const txt = document.getElementById('loading-txt');
     const sub = document.getElementById('loading-sub');
     
     const steps = [
         { t: "Calculando IMC...", s: "Processando peso e altura..." },
         { t: "Analisando Metabolismo...", s: `Baseado em ${userData.idade} anos...` },
-        { t: "Verificando Lesões...", s: userData.lesao === 'Nenhuma' ? "Apto para carga máxima..." : "Adaptando segurança..." },
         { t: "Finalizando Plano...", s: "Gerando diagnóstico..." }
     ];
 
     let i = 0;
     const interval = setInterval(() => {
         if (i < steps.length) {
-            title.innerText = steps[i].t;
+            txt.innerText = steps[i].t;
             sub.innerText = steps[i].s;
             i++;
         } else {
             clearInterval(interval);
-            // AQUI MUDOU: Em vez de mostrar o resultado, manda CADASTRAR
+            // MANDA PARA O CADASTRO
             nextStep('step-lead-capture');
         }
-    }, 1500);
+    }, 1200);
 }
 
-// --- 5. SISTEMA DE CADASTRO (LEAD) ---
-// Escuta o submit do formulário de cadastro novo
+// --- 5. CADASTRO DE LEAD (A CORREÇÃO ESTÁ AQUI) ---
 const leadForm = document.getElementById('lead-form');
 if(leadForm) {
     leadForm.addEventListener('submit', (e) => {
         e.preventDefault();
         
+        // Ativa a flag para travar redirecionamentos automáticos
+        isRegistering = true;
+
         const name = document.getElementById('reg-name').value;
         const phone = document.getElementById('reg-phone').value;
         const email = document.getElementById('reg-email').value;
@@ -113,234 +116,199 @@ if(leadForm) {
         const passConf = document.getElementById('reg-pass-conf').value;
         const btn = e.target.querySelector('button');
 
-        // Validação Senha
-        if(pass !== passConf) {
-            alert("As senhas não coincidem!");
-            return;
-        }
-        if(pass.length < 6) {
-            alert("A senha deve ter pelo menos 6 caracteres.");
-            return;
-        }
+        if(pass !== passConf) { alert("As senhas não conferem!"); return; }
+        if(pass.length < 6) { alert("Senha muito curta (mínimo 6)."); return; }
 
-        btn.innerText = "CRIANDO PERFIL...";
+        btn.innerText = "GERANDO PLANO...";
         btn.disabled = true;
 
-        // Cria usuário no Firebase Auth
         auth.createUserWithEmailAndPassword(email, pass)
             .then((cred) => {
-                // Salva TODOS os dados do Quiz + Contato no Firestore
+                console.log("Usuário criado no Auth:", cred.user.uid);
+                
+                // Salva no Firestore
                 return db.collection('usuarios').doc(cred.user.uid).set({
                     nome: name,
                     telefone: phone,
                     email: email,
-                    quizData: userData, // Salva as respostas do quiz
-                    nomeTreino: "Aguardando Pagamento", // Status inicial
-                    status: "lead", // Lead capturado
+                    quizData: userData,
+                    nomeTreino: "Aguardando Pagamento",
+                    status: "lead",
                     dataCadastro: new Date()
                 });
             })
             .then(() => {
-                // Sucesso! Mostra o Resultado
-                alert("Perfil criado com sucesso!");
-                showResults(name); // Passa o nome para personalizar a venda
+                console.log("Dados salvos no Firestore.");
+                // SUCESSO! Agora forçamos a ida para a venda
+                showResults(name);
+                
+                // Desativa flag e libera botão (apenas visualmente, já trocou de tela)
+                isRegistering = false; 
+                btn.disabled = false;
+                btn.innerText = "VER MEU DIAGNÓSTICO";
             })
             .catch((error) => {
-                console.error(error);
+                console.error("Erro no cadastro:", error);
                 let msg = "Erro ao cadastrar.";
-                if(error.code === 'auth/email-already-in-use') msg = "Este e-mail já está cadastrado. Faça login.";
+                if(error.code === 'auth/email-already-in-use') msg = "E-mail já existe. Tente fazer login.";
                 alert(msg);
-                btn.innerText = "VER MEU DIAGNÓSTICO";
+                
+                isRegistering = false;
+                btn.innerText = "TENTAR NOVAMENTE";
                 btn.disabled = false;
             });
     });
 }
 
-// --- 6. EXIBIÇÃO DO RESULTADO (IMC REAL) ---
+// --- 6. EXIBIÇÃO DO RESULTADO (VENDA) ---
 function showResults(userName) {
-    // 1. CÁLCULO REAL DO IMC
-    let alturaMetros = userData.altura / 100;
-    let imc = (userData.peso / (alturaMetros * alturaMetros)).toFixed(1);
+    try {
+        console.log("Calculando resultados...");
 
-    // 2. Preenche os números
-    const elImc = document.getElementById('res-imc');
-    const elIdade = document.getElementById('res-idade');
-    if(elImc) elImc.innerText = imc;
-    if(elIdade) elIdade.innerText = userData.idade + " anos";
+        // Proteção contra divisão por zero
+        let alturaMetros = userData.altura > 0 ? userData.altura / 100 : 1.70;
+        let pesoReal = userData.peso > 0 ? userData.peso : 70;
+        let imc = (pesoReal / (alturaMetros * alturaMetros)).toFixed(1);
 
-    // 3. LÓGICA MÉDICA ADAPTATIVA
-    let diagnosticoTexto = "";
-    
-    // Personaliza com o nome se tiver
-    let prefixo = userName ? `${userName}, ` : "";
+        // Preenche Tela
+        document.getElementById('res-imc').innerText = imc;
+        document.getElementById('res-idade').innerText = userData.idade + " anos";
 
-    if (imc < 18.5) {
-        diagnosticoTexto = `"${prefixo}seu IMC de ${imc} indica metabolismo acelerado. Para ganhar volume real, seu treino precisa de menos repetições e mais carga (tensão mecânica), focando em ${userData.foco}."`;
-    } else if (imc >= 18.5 && imc < 25) {
-        diagnosticoTexto = `"${prefixo}seu IMC de ${imc} está equilibrado. O segredo agora é a Recomposição Corporal: trocar gordura antiga por fibra muscular densa, dando ênfase total em ${userData.foco}."`;
-    } else if (imc >= 25 && imc < 30) {
-        diagnosticoTexto = `"${prefixo}com IMC de ${imc}, precisamos ativar o efeito EPOC. O plano será híbrido: força + alta intensidade metabólica para secar e definir ${userData.foco}."`;
-    } else {
-        diagnosticoTexto = `"${prefixo}atenção ao IMC de ${imc}. Sua prioridade absoluta é proteger as articulações enquanto aceleramos a queima de gordura visceral. O protocolo será ajustado para sua segurança."`;
+        // Lógica Médica
+        let diagnosticoTexto = "";
+        let prefixo = userName ? `${userName.split(' ')[0]}, ` : "";
+
+        if (imc < 18.5) {
+            diagnosticoTexto = `"${prefixo}seu IMC de ${imc} indica metabolismo acelerado. Focaremos em carga alta para ${userData.foco}."`;
+        } else if (imc >= 18.5 && imc < 25) {
+            diagnosticoTexto = `"${prefixo}seu IMC de ${imc} é equilibrado. Focaremos em definição muscular de ${userData.foco}."`;
+        } else if (imc >= 25 && imc < 30) {
+            diagnosticoTexto = `"${prefixo}com IMC de ${imc}, precisamos ativar queima de gordura e força para ${userData.foco}."`;
+        } else {
+            diagnosticoTexto = `"${prefixo}atenção ao IMC de ${imc}. O plano será ajustado para proteger articulações enquanto secamos."`;
+        }
+
+        // Injeta Texto
+        const diagElement = document.getElementById('diagnosis-text');
+        if(diagElement) {
+            diagElement.innerText = diagnosticoTexto;
+        } else {
+            // Fallback se o ID não existir
+            const fallback = document.querySelector('.diagnosis p');
+            if(fallback) fallback.innerText = diagnosticoTexto;
+        }
+
+        // Manda para a venda
+        nextStep('step-sales');
+
+    } catch (err) {
+        console.error("Erro ao mostrar resultados:", err);
+        // Se der erro, manda pra venda mesmo assim pra não perder o cliente
+        nextStep('step-sales'); 
     }
-
-    // Preenche os textos dinâmicos
-    const diagBox = document.querySelector('.diagnosis p');
-    if(diagBox) diagBox.innerText = diagnosticoTexto;
-    
-    // Atualiza os spans de resumo
-    const txtIdade = document.getElementById('txt-idade');
-    const txtDias = document.getElementById('txt-dias');
-    const txtFoco = document.getElementById('txt-foco');
-    
-    if(txtIdade) txtIdade.innerText = userData.idade;
-    if(txtDias) txtDias.innerText = userData.dias ? userData.dias.split(' ')[0] : "4";
-    if(txtFoco) txtFoco.innerText = userData.foco;
-
-    // Finalmente, mostra a venda
-    nextStep('step-sales');
 }
 
 function goToPayment() {
-    // Como o usuário JÁ está logado (acabou de criar conta), 
-    // você pode mandar o UID dele no link do checkout se a plataforma suportar (Webhook)
-    // Ou apenas mandar para o checkout simples.
-    alert("Redirecionando para Pagamento Seguro...");
-    // window.location.href = "SEU_LINK_CHECKOUT";
+    alert("Redirecionando para o Checkout...");
+    // window.location.href = "SEU_LINK_AQUI";
 }
 
-// --- 7. SISTEMA DE LOGIN (MODAL) ---
-// Usado apenas para quem JÁ tem conta e clicou em "Entrar" no menu
+// --- 7. AUTH STATE & LOGIN ---
 let isLoginMode = true;
 
-function toggleModal(modalId) { 
-    document.getElementById(modalId).classList.toggle('hidden'); 
-}
-
+function toggleModal(modalId) { document.getElementById(modalId).classList.toggle('hidden'); }
 function toggleAuthMode() {
     isLoginMode = !isLoginMode;
     const btn = document.getElementById('auth-btn');
-    const link = document.getElementById('toggle-link');
     const title = document.getElementById('modal-title');
-    const text = document.getElementById('toggle-text');
     
     if (isLoginMode) {
         title.innerText = "Acesso Thimanni";
         btn.innerText = "ENTRAR";
-        text.innerText = "Ainda não é aluno?";
-        link.innerText = "Criar conta";
     } else {
         title.innerText = "Criar Nova Conta";
         btn.innerText = "CADASTRAR";
-        text.innerText = "Já tem conta?";
-        link.innerText = "Fazer Login";
     }
 }
 
+// Listener do Login (Menu)
 const authForm = document.getElementById('auth-form');
 if(authForm) {
     authForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const email = document.getElementById('auth-email').value;
-        const password = document.getElementById('auth-password').value;
+        const pass = document.getElementById('auth-password').value;
         const btn = document.getElementById('auth-btn');
-        
+
         btn.innerText = "...";
 
         if (isLoginMode) {
-            // LOGIN NORMAL
-            auth.signInWithEmailAndPassword(email, password).then(() => {
+            auth.signInWithEmailAndPassword(email, pass).then(() => {
                 toggleModal('login-modal');
                 btn.innerText = "ENTRAR";
-            }).catch(err => { 
-                alert("Erro ao entrar: " + err.message); 
-                btn.innerText = "ENTRAR"; 
-            });
+            }).catch(err => { alert("Erro: " + err.message); btn.innerText = "ENTRAR"; });
         } else {
-            // CADASTRO PELO MODAL (Fluxo alternativo)
-            auth.createUserWithEmailAndPassword(email, password).then((cred) => {
+            // Cadastro via Modal (Raro, mas possível)
+            auth.createUserWithEmailAndPassword(email, pass).then((cred) => {
                 return db.collection('usuarios').doc(cred.user.uid).set({
-                    nome: "Aluno Novo",
                     email: email,
-                    nomeTreino: "Aguardando Pagamento",
                     status: "novo"
                 });
             }).then(() => {
                 toggleModal('login-modal');
                 alert("Conta criada!");
                 btn.innerText = "CADASTRAR";
-            }).catch(err => { 
-                alert(err.message); 
-                btn.innerText = "CADASTRAR"; 
             });
         }
     });
 }
 
 function logout() { 
-    auth.signOut().then(() => {
-        nextStep('step-home');
-        // Limpa dados locais se quiser
-    }); 
+    auth.signOut().then(() => nextStep('step-home')); 
 }
 
-// --- 8. GERENCIADOR DE ESTADO (AUTH) ---
-// Verifica se o usuário está logado ao carregar a página
+// Observador de Login
 auth.onAuthStateChanged((user) => {
     const navBtn = document.querySelector('.btn-login-nav');
     
     if (user) {
-        // --- USUÁRIO LOGADO ---
-        console.log("Logado:", user.email);
+        // Se estivermos no meio do cadastro (flag true), NÃO faça nada,
+        // deixe a função do formulário controlar a tela.
+        if (isRegistering) {
+            console.log("Usuário criado, aguardando transição manual...");
+            return;
+        }
+
+        console.log("Usuário logado detectado.");
         
-        // Carrega nome do usuário para o Dashboard
+        // Atualiza Menu
+        if(navBtn) {
+            navBtn.innerHTML = '<i class="ri-dashboard-line"></i> Painel';
+            navBtn.onclick = () => nextStep('step-dashboard');
+        }
+
+        // Carrega dados para o Dashboard
         db.collection('usuarios').doc(user.uid).get().then(doc => {
             if(doc.exists) {
                 const data = doc.data();
-                const nomeDisplay = data.nome ? data.nome.split(' ')[0] : "Aluno";
-                const elUserName = document.getElementById('user-name');
-                if(elUserName) elUserName.innerText = nomeDisplay;
-                
-                // Carrega dados do treino
-                loadUserPlanData(data);
+                const elName = document.getElementById('user-name');
+                const elPlan = document.getElementById('user-plan-name');
+                const btnDown = document.getElementById('btn-download-pdf');
+
+                if(elName) elName.innerText = data.nome ? data.nome.split(' ')[0] : "Aluno";
+                if(elPlan) elPlan.innerText = data.nomeTreino || "Analisando...";
+                if(btnDown && data.linkPdf) {
+                    btnDown.href = data.linkPdf;
+                    btnDown.classList.remove('disabled');
+                }
             }
         });
 
-        // Muda botão do menu
-        if(navBtn) {
-            navBtn.innerHTML = '<i class="ri-dashboard-line"></i> Painel do Aluno';
-            navBtn.onclick = () => nextStep('step-dashboard');
-        }
-        
-        // Se o usuário acabou de logar e não está no fluxo de compra, 
-        // você pode decidir se manda pro Dashboard.
-        // Se ele acabou de se cadastrar no fluxo (step-lead-capture), 
-        // ele vai cair aqui também, mas a função registerUser já lidou com a tela de venda.
-        
     } else {
-        // --- DESLOGADO ---
+        // Deslogado
         if(navBtn) {
             navBtn.innerHTML = '<i class="ri-user-line"></i> Área do Aluno';
             navBtn.onclick = () => toggleModal('login-modal');
         }
-        
-        // Proteção: Se estiver no dashboard, chuta pra home
-        const dash = document.getElementById('step-dashboard');
-        if(dash && dash.classList.contains('active')) {
-            nextStep('step-home');
-        }
     }
 });
-
-function loadUserPlanData(data) {
-    const elPlan = document.getElementById('user-plan-name');
-    const btnDown = document.getElementById('btn-download-pdf');
-    
-    if(elPlan) elPlan.innerText = data.nomeTreino || "Processando...";
-    
-    if(btnDown && data.linkPdf) {
-        btnDown.href = data.linkPdf;
-        btnDown.classList.remove('disabled');
-        btnDown.innerHTML = '<i class="ri-download-cloud-line"></i> BAIXAR TREINO COMPLETO';
-    }
-}
