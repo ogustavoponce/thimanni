@@ -48,11 +48,31 @@ h2 { font-size: 1.4rem; margin-bottom: 10px; line-height: 1.3; }
 .option-square:hover { border-color: var(--solid); background: rgba(255,69,0,0.1); }
 .option-square:hover i { color: var(--accent); }
 
-/* INPUTS (BIOMETRIA) */
+/* INPUTS (CORRIGIDO PARA O MODO DARK) */
 .inputs-grid { display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px; }
 .input-group label { display: block; font-size: 0.8rem; color: #888; margin-bottom: 5px; }
-.input-group input { width: 100%; background: #000; border: 1px solid #333; padding: 15px; border-radius: 8px; color: #fff; font-size: 1rem; }
-.input-group input:focus { border-color: var(--solid); outline: none; }
+
+/* Reset do estilo do navegador e aplicação do tema Dark */
+input { 
+    width: 100%; 
+    background-color: #0a0a0a; /* Fundo bem escuro */
+    border: 1px solid #333; 
+    padding: 15px; 
+    border-radius: 8px; 
+    color: #fff; /* Texto branco */
+    font-size: 1rem; 
+    appearance: none; /* Remove estilo do sistema */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    outline: none;
+    transition: 0.3s;
+}
+
+input:focus { 
+    border-color: var(--solid); 
+    background-color: #111;
+    box-shadow: 0 0 0 2px rgba(255, 69, 0, 0.2);
+}
 
 /* LISTA DE OPÇÕES (TEXTO + SUBTITULO) */
 .options-list { display: flex; flex-direction: column; gap: 10px; }
@@ -89,14 +109,14 @@ h2 { font-size: 1.4rem; margin-bottom: 10px; line-height: 1.3; }
 @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-/* MODAL */
+/* MODAL - Mais espaçado */
 .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100; display: flex; justify-content: center; align-items: center; }
-.modal-content { background: var(--card); padding: 30px; border-radius: 15px; width: 90%; max-width: 400px; border: 1px solid var(--border); position: relative; }
+.modal-content { background: var(--card); padding: 40px; border-radius: 15px; width: 90%; max-width: 450px; border: 1px solid var(--border); position: relative; }
 .close { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; cursor: pointer; }
-.toggle-auth { text-align: center; margin-top: 15px; font-size: 0.9rem; color: #888; }
+.toggle-auth { text-align: center; margin-top: 20px; font-size: 0.9rem; color: #888; }
 .toggle-auth a { color: var(--accent); text-decoration: none; }
 
-/* DASHBOARD CORRIGIDO */
+/* DASHBOARD */
 .dashboard-layout { width: 100%; max-width: 900px; padding: 0 20px; }
 .dash-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
 .user-info { display: flex; align-items: center; gap: 15px; }

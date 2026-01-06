@@ -318,13 +318,21 @@
             <span class="close" onclick="toggleModal('login-modal')">&times;</span>
             <h2 id="modal-title">Acesso Thimanni</h2>
             <form id="auth-form">
-                <input type="email" id="auth-email" placeholder="E-mail" required>
-                <input type="password" id="auth-password" placeholder="Senha" required>
+                <div class="inputs-grid">
+                    <div class="input-group">
+                        <label>E-mail</label>
+                        <input type="email" id="auth-email" placeholder="Seu E-mail" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Senha</label>
+                        <input type="password" id="auth-password" placeholder="Sua Senha" required>
+                    </div>
+                </div>
                 <button type="submit" id="auth-btn" class="btn-primary">ENTRAR</button>
             </form>
             <div class="toggle-auth">
                 <span id="toggle-text">Ainda não é aluno?</span>
-                <a href="#" onclick="startQuizFlow()"><span id="toggle-link">Criar conta (Fazer Quiz)</span></a>
+                <a href="#" onclick="startQuizFlow()"><span id="toggle-link">Criar conta</span></a>
             </div>
         </div>
     </div>

@@ -43,7 +43,7 @@ function nextStep(stepId) {
     if(next){
         next.classList.remove('hidden');
         next.classList.add('active');
-        window.scrollTo(0, 0); // Rola para o topo ao mudar de tela
+        window.scrollTo(0, 0); 
     } else {
         console.error("Tela não encontrada:", stepId);
     }
@@ -130,25 +130,23 @@ if(leadForm) {
 
         auth.createUserWithEmailAndPassword(email, pass)
             .then((cred) => {
-                // Tenta salvar no banco (mas não trava se der erro)
+                // Tenta salvar no banco
                 return db.collection('usuarios').doc(cred.user.uid).set({
                     nome: name,
                     telefone: phone,
                     email: email,
                     quizData: userData,
                     nomeTreino: "Aguardando Pagamento",
-                    status: "lead", // Marcado como LEAD
+                    status: "lead", 
                     dataCadastro: new Date()
                 }).catch(err => {
-                    console.error("Erro no banco ignorado para venda:", err);
+                    console.error("Erro no banco ignorado:", err);
                     return true;
                 });
             })
             .then(() => {
-                // Sucesso! Vai para a Venda
                 showResults(name);
-                
-                isRegistering = false; // Destrava
+                isRegistering = false;
                 btn.disabled = false;
                 btn.innerText = "VER MEU DIAGNÓSTICO";
             })
@@ -168,16 +166,13 @@ if(leadForm) {
 // --- 6. EXIBIÇÃO DO RESULTADO (VENDA) ---
 function showResults(userName) {
     try {
-        // Proteção contra divisão por zero
         let alturaMetros = userData.altura > 0 ? userData.altura / 100 : 1.70;
         let pesoReal = userData.peso > 0 ? userData.peso : 70;
         let imc = (pesoReal / (alturaMetros * alturaMetros)).toFixed(1);
 
-        // Preenche Tela
         document.getElementById('res-imc').innerText = imc;
         document.getElementById('res-idade').innerText = userData.idade + " anos";
 
-        // Lógica Médica
         let diagnosticoTexto = "";
         let prefixo = userName ? `${userName.split(' ')[0]}, ` : "";
 
@@ -191,13 +186,11 @@ function showResults(userName) {
             diagnosticoTexto = `"${prefixo}atenção ao IMC de ${imc}. O plano será ajustado para proteger articulações enquanto secamos."`;
         }
 
-        // Injeta Texto
         const diagElement = document.getElementById('diagnosis-text');
         if(diagElement) {
             diagElement.innerText = diagnosticoTexto;
         }
 
-        // Manda para a venda
         nextStep('step-sales');
 
     } catch (err) {
@@ -249,21 +242,18 @@ auth.onAuthStateChanged((user) => {
     const navBtn = document.querySelector('.btn-login-nav');
     
     if (user) {
-        // Se estivermos no meio do cadastro (flag true), o fluxo do cadastro manda pra Venda.
         if (isRegistering) return;
         
         console.log("Usuário detectado. Verificando status...");
 
-        // Busca dados no Firestore para saber se é LEAD ou ALUNO
+        // Busca dados no Firestore
         db.collection('usuarios').doc(user.uid).get().then(doc => {
             if(doc.exists) {
                 const data = doc.data();
                 
-                // Atualiza Nome na Interface
                 const elName = document.getElementById('user-name');
                 if(elName) elName.innerText = data.nome ? data.nome.split(' ')[0] : "Aluno";
 
-                // Atualiza Treino no Dashboard
                 const elPlan = document.getElementById('user-plan-name');
                 const btnDown = document.getElementById('btn-download-pdf');
                 if(elPlan) elPlan.innerText = data.nomeTreino || "Analisando...";
@@ -272,38 +262,30 @@ auth.onAuthStateChanged((user) => {
                     btnDown.classList.remove('disabled');
                 }
 
-                // ROTEAMENTO: 
-                // Se status for 'lead' (não pagou) -> Vai pra Venda (mas precisa recalcular/mostrar venda)
-                // Se status for 'active' -> Vai pro Dashboard
+                // Lógica de Redirecionamento
                 if (data.status === 'lead') {
-                    // Como ele já fez o quiz antes, mandamos para a venda.
-                    // Idealmente, recarregaríamos os dados do quiz, mas para simplificar, vamos para venda.
-                    // Se os dados do quiz estiverem na memória, showResults funciona. 
-                    // Se recarregou a página, pode dar erro de IMC vazio, então mandamos pro Dashboard com aviso.
+                    // Se for lead, vai pra venda
                     if (userData.idade > 0) {
                         showResults(data.nome);
                     } else {
-                        // Se perdeu os dados, manda pro dashboard "limitado" ou home
-                         nextStep('step-sales'); // Tenta mostrar a venda
+                         nextStep('step-sales'); 
                     }
                 } else {
+                    // Se for aluno pago, vai pro dashboard
                     nextStep('step-dashboard');
                 }
 
             } else {
-                // Usuário sem dados (Erro) -> Manda pro Dashboard vazio
                 nextStep('step-dashboard');
             }
         });
 
-        // Atualiza Botão do Menu
         if(navBtn) {
             navBtn.innerHTML = '<i class="ri-dashboard-line"></i> Painel';
             navBtn.onclick = () => nextStep('step-dashboard');
         }
 
     } else {
-        // Deslogado
         if(navBtn) {
             navBtn.innerHTML = '<i class="ri-user-line"></i> Área do Aluno';
             navBtn.onclick = () => toggleModal('login-modal');
